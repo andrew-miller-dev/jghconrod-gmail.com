@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace DealershipProject
 {
-    /* Car & Employee & Client & VehiclesPurchased & Comission Earned Class':
+    /* Car & Employee & Client & VehiclesPurchased & ComissionEarned Class':
      * They are used to create instances of each respective object in the inventory class.
      * Constructors are invoked within their respective methods in Inventory when adding/removing from their respective lists.
      */
     class Vehicle
     {
-        // Possible additions: default cost for each car, vin
+        // Possible additions: default cost for each car, vin, status
         public string make;
         public string model;
         public int year;
@@ -30,7 +30,7 @@ namespace DealershipProject
     }
      class Client
     {
-        // Possible additions: default id for each client
+        // Possible additions: default id for each client, telephone, email
         public string fname;
         public string lname;
         public Client(string Fname, string Lname)
