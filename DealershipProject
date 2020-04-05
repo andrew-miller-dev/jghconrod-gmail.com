@@ -20,7 +20,7 @@ namespace DealershipProject
     }
     class Employee
     {
-        // Possible additions: default id for each employee, comission field to keep track of earned comission when selling a car.
+        // Possible additions: default id for each employee
         public string fname;
         public string lname;
         public Employee(string Fname, string Lname)
@@ -30,7 +30,7 @@ namespace DealershipProject
     }
      class Client
     {
-        // Possible additions: default id for each client, previous purchases tracked within each instance of object.
+        // Possible additions: default id for each client
         public string fname;
         public string lname;
         public Client(string Fname, string Lname)
@@ -40,16 +40,22 @@ namespace DealershipProject
     }  
     class VehiclePurchase
     {
-        // Possible additions: add employees to purchases to track comission earned
-        public string fname;
-        public string lname;
-        public string make;
-        public string model;
-        public int year;
+        public Client client;
+        public Vehicle vehicle;
         public int cost;
-        public VehiclePurchase(string Fname, string Lname, string Make, string Model, int Year, int Cost)
+        public Employee employee;
+        public VehiclePurchase(Client Client, Vehicle Vehicle, int Cost, Employee Employee)
         {
-            fname = Fname; lname = Lname; make = Make; model = Model; year = Year; cost = Cost;
+            client = Client; vehicle = Vehicle; cost = Cost; employee = Employee;
+        }
+    }
+    class ComissionEarned
+    {
+        public Employee employee;
+        public double comission;
+        public ComissionEarned(Employee Employee, double Comission)
+        {
+            employee = Employee; comission = Comission;
         }
     }
 
@@ -64,6 +70,7 @@ namespace DealershipProject
         protected static List<Client> clients = new List<Client>();
         protected static List<Employee> employees = new List<Employee>();
         protected static List<VehiclePurchase> vehiclesPurchased = new List<VehiclePurchase>();
+        protected static List<ComissionEarned> comissionsEarned = new List<ComissionEarned>();
 
         /* AddEmployee: Adds an employee object to the employees list.
          * This method uses a bool to check if the information is a duplicate before adding to the list.
@@ -196,8 +203,12 @@ namespace DealershipProject
          * This method removes the car input from the list cars, and adds the car/client information to a list called vehiclesPurchased.
          * It checks with a bool if the car and client are present in the list before allowing them to be removed.
          */
-        public void SellCar(string cfname, string clname, string make, string model, int year, int cost)
+        public void SellCar(string cfname, string clname, string make, string model, int year, int cost, string efname, string elname)
         {
+            var client = new Client(cfname, clname);
+            var vehicle = new Vehicle(make, model, year);
+            var employee = new Employee(efname, elname);
+
             bool carPresent = false;
             bool clientPresent = false;
 
@@ -218,15 +229,26 @@ namespace DealershipProject
 
             if(clientPresent == true & carPresent == true)
             {
-                var VehiclePurchase = new VehiclePurchase(cfname, clname, make, model, year, cost);
-                vehiclesPurchased.Add(VehiclePurchase);
+                var vehiclePurchase = new VehiclePurchase(client, vehicle, cost, employee);
+                vehiclesPurchased.Add(vehiclePurchase);
 
-                Console.WriteLine($"{cfname} {clname} has purchased a {year} {make} {model} for ${cost}");
+                double comission = CalcComission(cost);
+                var comissionEarned = new ComissionEarned(employee, comission);
+                comissionsEarned.Add(comissionEarned);
+
+                Console.WriteLine($"{cfname} {clname} has purchased a {year} {make} {model} for ${cost}.");
+                Console.WriteLine($"{efname} {elname} has made earned ${comission} in comission.");
 
                 RemoveCar(make, model, year);
             }
             else
                 Console.WriteLine("Invalid information, this cannot be sold. Please check all your information and try again..");
+        }
+
+        public double CalcComission(double cost)
+        {
+            double comission = cost * 0.05;
+            return comission;
         }
 
         // ShowPurchased: Display the name of the client and vehicles they have purchashed through vehiclePurchased and the total made through purchases.
@@ -237,10 +259,21 @@ namespace DealershipProject
             Console.WriteLine("Vehicles purchased at this dealership:");
             foreach(VehiclePurchase vp in vehiclesPurchased)
             {
-                Console.WriteLine($"Client: {vp.fname} {vp.lname}, Vehicle: {vp.year} {vp.make} {vp.model}, Cost: ${vp.cost}");
+                Console.WriteLine($"Client: {vp.client.fname} {vp.client.lname}, Vehicle: {vp.vehicle.year} {vp.vehicle.make} {vp.vehicle.model}, " +
+                                  $"Cost: ${vp.cost}, Sold by: {vp.employee.fname} {vp.employee.lname}");
                 totalMade += vp.cost;
             }
-            Console.WriteLine($"Total made through sales: ${totalMade}");
+            Console.WriteLine($"Total ammount made through sales: ${totalMade}");
+        }
+
+        // showComission: Display the name of the employee and comission earned through their sales.
+        public void ShowComission()
+        {
+            Console.WriteLine($"Total comission made by employees:");
+            foreach (ComissionEarned ce in comissionsEarned)
+            {
+                Console.WriteLine($"Name: {ce.employee.fname} {ce.employee.lname}, Comission Earned: ${ce.comission}");
+            }
         }
 
         // ShowEmployee: Display the of each employee object in the employees list inherited through inventory
@@ -272,11 +305,6 @@ namespace DealershipProject
                 Console.WriteLine($"{v.year} {v.make} {v.model}");
             }
         }
-        public void TotalMade()
-        {
-            Console.WriteLine("Total made at dealership:");
-            
-        }
 
         // ShowDealership: Display all dealership information inherited through inventory class.
         public void ShowDealership()
@@ -289,6 +317,8 @@ namespace DealershipProject
             ShowClient();
             Console.WriteLine();
             ShowPurchased();
+            Console.WriteLine();
+            ShowComission();
         }
     }
 
@@ -349,20 +379,30 @@ namespace DealershipProject
             inv.RemoveCar("Mercedes", "Benz", 2016);
             inv.AddCar("Cadillac", "Deville", 1999);
 
-            // Format: Client Firstname, Client Lastname, Make, Model, Year, Cost
-            dealer.SellCar("Nora", "Lee", "Buick", "Regal", 2009, 3400);
-            dealer.SellCar("Joshua", "Charlie", "Cadillac", "Deville", 1999, 900);
-            dealer.SellCar("Lisa", "Britton", "Toyota", "Prius", 2015, 7000);
-            dealer.SellCar("Huxley", "Graham", "Acura", "RDX", 2009, 2200);
-            dealer.SellCar("Ryan", "Galloway", "Jeep", "Wrangler", 2018, 12000);
-            dealer.SellCar("Joshua", "Charlie", "Honda", "Civic", 2005, 1900);
-            dealer.SellCar("Farham", "Wood", "Nissan", "Sentra", 2007, 1600);
-            dealer.SellCar("Rayan", "Galloway", "Honda", "Civic", 2009, 2500);
-            dealer.SellCar("Josiah", "Cairns", "Hyundai", "Sonata", 2019, 14500);
-            Console.WriteLine();
-            dealer.SellCar("Kathleen", "Darlin", "Buick", "Regal", 2009, 3400); // Comes up invalid because information does not exist *onpurpose*
+            inv.AddEmployee("Mark", "Wong");
+            inv.AddEmployee("Jeff", "Halbert");
+            inv.AddEmployee("John", "Jones");
+            inv.AddEmployee("Mona", "Limbar");
+            inv.AddEmployee("Rabia", "Forn");
+            inv.AddEmployee("Ryan", "Graves");
+            inv.AddEmployee("Mona", "Limbar");      // Comes up invalid as a duplicate *onpurpose*
+            inv.RemoveEmployee("John", "Jones");
 
-            do{
+            // Format: Client Firstname, Client Lastname, Make, Model, Year, Cost, Employee Firsname, Employee lastname
+            dealer.SellCar("Nora", "Lee", "Buick", "Regal", 2009, 3400, "Mona", "Limbar");
+            dealer.SellCar("Joshua", "Charlie", "Cadillac", "Deville", 1999, 900, "Mark", "Wong");
+            dealer.SellCar("Lisa", "Britton", "Toyota", "Prius", 2015, 7000, "Rabia", "Forn");
+            dealer.SellCar("Huxley", "Graham", "Acura", "RDX", 2009, 2200, "Mona", "Limbar");
+            dealer.SellCar("Ryan", "Galloway", "Jeep", "Wrangler", 2018, 12000, "Ryan", "Graves");
+            dealer.SellCar("Joshua", "Charlie", "Honda", "Civic", 2005, 1900, "Jeff", "Halbert");
+            dealer.SellCar("Farham", "Wood", "Nissan", "Sentra", 2007, 1600, "Mark", "Wong");
+            dealer.SellCar("Rayan", "Galloway", "Honda", "Civic", 2009, 2500, "Rabia", "Forn");
+            dealer.SellCar("Josiah", "Cairns", "Hyundai", "Sonata", 2019, 14500, "John", "Jones");
+            Console.WriteLine();
+            dealer.SellCar("Kathleen", "Darlin", "Buick", "Regal", 2009, 3400, "Mark", "Wong"); // Comes up invalid because information does not exist *onpurpose*
+
+            do
+            {
                 Console.Clear();    // Clears the screen so you don't have to see it every run time, can be commented out to see what's happening above.
                 Console.WriteLine("*Dealership Management System*");
                 Console.WriteLine("\nPlease enter your desired command, if you do not know the commands please type 'help'.");
@@ -380,6 +420,7 @@ namespace DealershipProject
                     Console.WriteLine("'show clients' displays all clients");
                     Console.WriteLine("'show employees' displays all employees");
                     Console.WriteLine("'show purchased' displays all vehicles sold all the dealership");
+                    Console.WriteLine("'show comissions' displays each employee and comissions they've earned");
                     Console.WriteLine("\nAdd Commands:");
                     Console.WriteLine("'add client' to add a client");
                     Console.WriteLine("'add employee' to add an employee");
@@ -408,7 +449,11 @@ namespace DealershipProject
                 {
                     dealer.ShowEmployee();
                 }
-                if(input == "add client")
+                if (input == "show comissions")
+                {
+                    dealer.ShowComission();
+                }
+                if (input == "add client")
                 {
                     Console.WriteLine("Please enter your clients first name:");
                     string fname = Console.ReadLine();
@@ -471,11 +516,17 @@ namespace DealershipProject
                 if(input == "sell vehicle")
                 {
                     Console.WriteLine("In order to sell a vehicle we must gather some information..");
+                    Console.WriteLine("We need the infromation of the employee who sold the vehicle:");
+                    Console.WriteLine("Enter your first name:");
+                    string efname = Console.ReadLine();
+                    Console.WriteLine("Enter your last name:");
+                    string elname = Console.ReadLine();
+
                     Console.WriteLine("We need your clients information:");
                     Console.WriteLine("Enter your clients first name:");
-                    string fname = Console.ReadLine();
+                    string cfname = Console.ReadLine();
                     Console.WriteLine("Enter your clients last name:");
-                    string lname = Console.ReadLine();
+                    string clname = Console.ReadLine();
 
                     Console.WriteLine("We need the vehicles information:");
                     Console.WriteLine("Enter the vehicles make:");
@@ -490,7 +541,7 @@ namespace DealershipProject
                     string costSTR = Console.ReadLine();
                     int cost = Convert.ToInt32(costSTR);
 
-                    dealer.SellCar(fname, lname, make, model, year, cost);
+                    dealer.SellCar(cfname, clname, make, model, year, cost, efname, elname);
                 }
                 if(input == "show purchased")
                 {
