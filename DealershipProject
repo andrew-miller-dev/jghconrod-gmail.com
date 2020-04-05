@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DealershipProject
 {
-    /* Car & Employee & Client Class':
+    /* Car & Employee & Client & VehiclesPurchased Class':
      * They are used to create instances of each respective object in the inventory class.
      * Constructors are invoked within their respective methods in Inventory when adding/removing from their respective lists.
      */
@@ -38,7 +38,7 @@ namespace DealershipProject
             fname = Fname; lname = Lname;
         }
     }  
-    class VehiclesPurchased
+    class VehiclePurchase
     {
         // Possible additions: add employees to purchases to track comission earned
         public string fname;
@@ -47,7 +47,7 @@ namespace DealershipProject
         public string model;
         public int year;
         public int cost;
-        public VehiclesPurchased(string Fname, string Lname, string Make, string Model, int Year, int Cost)
+        public VehiclePurchase(string Fname, string Lname, string Make, string Model, int Year, int Cost)
         {
             fname = Fname; lname = Lname; make = Make; model = Model; year = Year; cost = Cost;
         }
@@ -63,7 +63,7 @@ namespace DealershipProject
         protected static List<Vehicle> vehicles = new List<Vehicle>();
         protected static List<Client> clients = new List<Client>();
         protected static List<Employee> employees = new List<Employee>();
-        protected static List<VehiclesPurchased> vehiclesPurchased = new List<VehiclesPurchased>();
+        protected static List<VehiclePurchase> vehiclesPurchased = new List<VehiclePurchase>();
 
         /* AddEmployee: Adds an employee object to the employees list.
          * This method uses a bool to check if the information is a duplicate before adding to the list.
@@ -218,7 +218,7 @@ namespace DealershipProject
 
             if(clientPresent == true & carPresent == true)
             {
-                var VehiclePurchase = new VehiclesPurchased(cfname, clname, make, model, year, cost);
+                var VehiclePurchase = new VehiclePurchase(cfname, clname, make, model, year, cost);
                 vehiclesPurchased.Add(VehiclePurchase);
 
                 Console.WriteLine($"{cfname} {clname} has purchased a {year} {make} {model} for ${cost}");
@@ -235,7 +235,7 @@ namespace DealershipProject
             int totalMade = 0;
 
             Console.WriteLine("Vehicles purchased at this dealership:");
-            foreach(VehiclesPurchased vp in vehiclesPurchased)
+            foreach(VehiclePurchase vp in vehiclesPurchased)
             {
                 Console.WriteLine($"Client: {vp.fname} {vp.lname}, Vehicle: {vp.year} {vp.make} {vp.model}, Cost: ${vp.cost}");
                 totalMade += vp.cost;
