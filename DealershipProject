@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DealershipProject
 {
-    /* Car & Employee & Client & VehiclesPurchased Class':
+    /* Car & Employee & Client & VehiclesPurchased & Comission Earned Class':
      * They are used to create instances of each respective object in the inventory class.
      * Constructors are invoked within their respective methods in Inventory when adding/removing from their respective lists.
      */
