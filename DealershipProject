@@ -37,7 +37,20 @@ namespace DealershipProject
         {
             fname = Fname; lname = Lname;
         }
-    }   
+    }  
+    class VehiclesPurchased
+    {
+        public string fname;
+        public string lname;
+        public string make;
+        public string model;
+        public int year;
+        public int cost;
+        public VehiclesPurchased(string Fname, string Lname, string Make, string Model, int Year, int Cost)
+        {
+            fname = Fname; lname = Lname; make = Make; model = Model; year = Year; cost = Cost;
+        }
+    }
 
     /* Inventory Class:
      * This class tracks all inventory which can then be inherited in further classes to access and manipulate data.
@@ -51,8 +64,9 @@ namespace DealershipProject
         protected static List<Employee> employees = new List<Employee>();
 
         // Currently how i'm tracking vehiclesPurchased. just a list with client info/vehicle info stored in a string.
-        protected static List<string> vehiclesPurchased = new List<string>();  
-        
+        //protected static List<string> vehiclesPurchased = new List<string>();
+        protected static List<VehiclesPurchased> vehiclesPurchased = new List<VehiclesPurchased>();
+
         /* AddEmployee: Adds an employee object to the employees list.
          * This method uses a bool to check if the information is a duplicate before adding to the list.
          */
@@ -206,9 +220,10 @@ namespace DealershipProject
 
             if(clientPresent == true & carPresent == true)
             {
-                vehiclesPurchased.Add($"Client: {cfname} {clname}, Vehicle: {year} {make} {model}, Cost: ${cost}");
+                var VehiclePurchase = new VehiclesPurchased(cfname, clname, make, model, year, cost);
+                vehiclesPurchased.Add(VehiclePurchase);
 
-                Console.WriteLine($"{cfname} {clname} has purchased a {year} {make} {model} for ${cost}.");
+                Console.WriteLine($"{cfname} {clname} has purchased a {year} {make} {model} for ${cost}");
 
                 RemoveCar(make, model, year);
             }
@@ -221,7 +236,10 @@ namespace DealershipProject
         {
             Console.WriteLine("Vehicles purchased at this dealership:");
             vehiclesPurchased.Sort();
-            vehiclesPurchased.ForEach(Console.WriteLine);
+            foreach(VehiclesPurchased vp in vehiclesPurchased)
+            {
+                Console.WriteLine($"Client: {vp.fname} {vp.lname}, Vehicle: {vp.year} {vp.make} {vp.model}, Cost: ${vp.cost}");
+            }
         }
 
         // ShowEmployee: Display the of each employee object in the employees list inherited through inventory
@@ -252,6 +270,11 @@ namespace DealershipProject
             {
                 Console.WriteLine($"{v.year} {v.make} {v.model}");
             }
+        }
+        public void TotalMade()
+        {
+            Console.WriteLine("Total made at dealership:");
+            
         }
 
         // ShowDealership: Display all dealership information inherited through inventory class.
