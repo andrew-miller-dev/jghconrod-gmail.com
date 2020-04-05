@@ -40,6 +40,7 @@ namespace DealershipProject
     }  
     class VehiclesPurchased
     {
+        // Possible additions: add employees to purchases to track comission earned
         public string fname;
         public string lname;
         public string make;
@@ -62,9 +63,6 @@ namespace DealershipProject
         protected static List<Vehicle> vehicles = new List<Vehicle>();
         protected static List<Client> clients = new List<Client>();
         protected static List<Employee> employees = new List<Employee>();
-
-        // Currently how i'm tracking vehiclesPurchased. just a list with client info/vehicle info stored in a string.
-        //protected static List<string> vehiclesPurchased = new List<string>();
         protected static List<VehiclesPurchased> vehiclesPurchased = new List<VehiclesPurchased>();
 
         /* AddEmployee: Adds an employee object to the employees list.
@@ -231,15 +229,18 @@ namespace DealershipProject
                 Console.WriteLine("Invalid information, this cannot be sold. Please check all your information and try again..");
         }
 
-        // ShowPurchased: Display the name of the client and vehicles they have purchashed after sorting the list through vehiclePurchased
+        // ShowPurchased: Display the name of the client and vehicles they have purchashed through vehiclePurchased and the total made through purchases.
         public void ShowPurchased()
         {
+            int totalMade = 0;
+
             Console.WriteLine("Vehicles purchased at this dealership:");
-            vehiclesPurchased.Sort();
             foreach(VehiclesPurchased vp in vehiclesPurchased)
             {
                 Console.WriteLine($"Client: {vp.fname} {vp.lname}, Vehicle: {vp.year} {vp.make} {vp.model}, Cost: ${vp.cost}");
+                totalMade += vp.cost;
             }
+            Console.WriteLine($"Total made through sales: ${totalMade}");
         }
 
         // ShowEmployee: Display the of each employee object in the employees list inherited through inventory
