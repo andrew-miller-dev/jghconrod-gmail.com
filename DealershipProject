@@ -263,6 +263,8 @@ namespace DealershipProject
             ShowEmployee();
             Console.WriteLine();
             ShowClient();
+            Console.WriteLine();
+            ShowPurchased();
         }
     }
 
