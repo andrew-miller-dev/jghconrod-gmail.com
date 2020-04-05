@@ -1,0 +1,479 @@
+using System;
+using System.Collections.Generic;
+
+namespace DealershipProject
+{
+    /* Car & Employee & Client Class':
+     * They are used to create instances of each respective object in the inventory class.
+     * Constructors are invoked within their respective methods in Inventory when adding/removing from their respective lists.
+     */
+    class Vehicle
+    {
+        // Possible additions: default cost for each car, vin
+        public string make;
+        public string model;
+        public int year;
+        public Vehicle(string Make, string Model, int Year)
+        {
+            make = Make; model = Model; year = Year;
+        }
+    }
+    class Employee
+    {
+        // Possible additions: default id for each employee, comission field to keep track of earned comission when selling a car.
+        public string fname;
+        public string lname;
+        public Employee(string Fname, string Lname)
+        {
+            fname = Fname; lname = Lname;
+        }
+    }
+     class Client
+    {
+        // Possible additions: default id for each client, previous purchases tracked within each instance of object.
+        public string fname;
+        public string lname;
+        public Client(string Fname, string Lname)
+        {
+            fname = Fname; lname = Lname;
+        }
+    }   
+
+    /* Inventory Class:
+     * This class tracks all inventory which can then be inherited in further classes to access and manipulate data.
+     * Methods in this class include AddEmployee, RemoveEmployee, AddClient, RemoveClient, AddCar, RemoveCar.
+     */
+    class Inventory
+    {
+        // Each list item is an instance of an object of their respective classes
+        protected static List<Vehicle> vehicles = new List<Vehicle>();
+        protected static List<Client> clients = new List<Client>();
+        protected static List<Employee> employees = new List<Employee>();
+
+        // Currently how i'm tracking vehiclesPurchased. just a list with client info/vehicle info stored in a string.
+        protected static List<string> vehiclesPurchased = new List<string>();  
+        
+        /* AddEmployee: Adds an employee object to the employees list.
+         * This method uses a bool to check if the information is a duplicate before adding to the list.
+         */
+        public void AddEmployee(string fname, string lname)
+        {
+            var employee = new Employee(fname, lname);
+            bool duplicate = false;
+
+            foreach (Employee e in employees)
+            {
+                if(e.fname == fname & e.lname == lname)
+                {
+                    duplicate = true;
+                }
+            }
+
+            if(duplicate == false)
+            {
+                employees.Add(employee);
+                Console.WriteLine($"{fname} {lname} has been added successfully!");
+            }
+            else
+                Console.WriteLine("This is a duplicate employee and cannot be added..");
+        }
+
+        /* RemoveEmployee: Removes an employee object to the employees list.
+         * This method checks if the information entered actually matches an object in the list before removing it.
+         */
+        public void RemoveEmployee(string fname, string lname)
+        {
+            for (int i = 0; i < employees.Count; i++)
+            {
+                if (employees[i].fname == fname & employees[i].lname == lname)
+                {
+                    employees.RemoveAt(i);
+                    Console.WriteLine($"{fname} {lname} has been removed successfully!");
+                }
+            }
+        }
+
+        /* AddClient: Adds a client object to the clients list.
+         * This method uses a bool to check if the information is a duplicate before adding to the list.
+         */
+        public void AddClient(string fname, string lname)
+        {
+            var client = new Client(fname, lname);
+            bool duplicate = false;
+
+            foreach (Client c in clients)
+            {
+                if (c.fname == fname & c.lname == lname)
+                {
+                    duplicate = true;
+                }
+            }
+
+            if (duplicate == false)
+            {
+                clients.Add(client);
+                Console.WriteLine($"{fname} {lname} has been added successfully!");
+            }
+            else
+                Console.WriteLine("This is a duplicate client and cannot be added..");
+        }
+
+        /* RemoveClient: Removes a client object to the clients list.
+         * This method checks if the information entered actually matches an object in the list before removing it.
+         */
+        public void RemoveClient(string fname, string lname)
+        {
+            for (int i = 0; i < clients.Count; i++)
+            {
+                if (clients[i].fname == fname & clients[i].lname == lname)
+                {
+                    clients.RemoveAt(i);
+                    Console.WriteLine($"{fname} {lname} has been removed successfully!");
+                }
+            }
+        }
+
+        /* AddCar: Adds a car object to the cars list.
+         * This method uses a bool to check if the information is a duplicate before adding to the list.
+         */
+        public void AddCar(string make, string model, int year)
+        {
+            var vehicle = new Vehicle(make, model, year);
+            bool duplicate = false;
+
+            foreach (Vehicle c in vehicles)
+            {
+                if (c.make == make & c.model == model & c.year == year)
+                {
+                    duplicate = true;
+                }
+            }
+
+            if (duplicate == false)
+            {
+                vehicles.Add(vehicle);
+                Console.WriteLine($"{year} {make} {model} has been added successfully");
+            }
+            else
+                Console.WriteLine("This is a duplicate car and cannot be added..");
+        }
+
+        /* RemoveCar: Removes a car object to the cars list.
+         * This method checks if the information entered actually matches an object in the list before removing it.
+         */
+        public void RemoveCar(string make, string model, int year)
+        {
+            for (int i = 0; i < vehicles.Count; i++)
+            {
+                if (vehicles[i].make == make & vehicles[i].model == model & vehicles[i].year == year)
+                {
+                    vehicles.RemoveAt(i);
+                    Console.WriteLine($"{year} {make} {model} has been removed successfully!");
+                }
+            }
+        }
+    }
+
+    /* Dealership Class:
+     * This class inherites from the Inventory class to manipulate and display list data.
+     * Methods in this class include SellCar, ShowPurchased, ShowEmployee, ShowClient, ShowCar, ShowDealership.
+     */
+    class Dealership : Inventory
+    {
+        /* SellCar: Takes client/car information as parameters and sells the specified car to the specified client.
+         * This method removes the car input from the list cars, and adds the car/client information to a list called vehiclesPurchased.
+         * It checks with a bool if the car and client are present in the list before allowing them to be removed.
+         */
+        public void SellCar(string cfname, string clname, string make, string model, int year, int cost)
+        {
+            bool carPresent = false;
+            bool clientPresent = false;
+
+            foreach(Client c in clients)
+            {
+                if(c.fname == cfname & c.lname == clname)
+                {
+                    clientPresent = true;
+                }
+            }
+            foreach(Vehicle v in vehicles)
+            {
+                if(v.make == make & v.model == model & v.year == year)
+                {
+                    carPresent = true;
+                }
+            }
+
+            if(clientPresent == true & carPresent == true)
+            {
+                vehiclesPurchased.Add($"Client: {cfname} {clname}, Vehicle: {year} {make} {model}, Cost: ${cost}");
+
+                Console.WriteLine($"{cfname} {clname} has purchased a {year} {make} {model} for ${cost}.");
+
+                RemoveCar(make, model, year);
+            }
+            else
+                Console.WriteLine("Invalid information, this cannot be sold. Please check all your information and try again..");
+        }
+
+        // ShowPurchased: Display the name of the client and vehicles they have purchashed after sorting the list through vehiclePurchased
+        public void ShowPurchased()
+        {
+            Console.WriteLine("Vehicles purchased at this dealership:");
+            vehiclesPurchased.Sort();
+            vehiclesPurchased.ForEach(Console.WriteLine);
+        }
+
+        // ShowEmployee: Display the of each employee object in the employees list inherited through inventory
+        public void ShowEmployee()
+        {
+            Console.WriteLine("Employees: ");
+            foreach (Employee e in employees)
+            {
+                Console.WriteLine($"{e.fname} {e.lname}");
+            }
+        }
+
+        // ShowClient: Display the of each client object in the clients list inherited through inventory
+        public void ShowClient()
+        {
+            Console.WriteLine("Clients: ");
+            foreach (Client c in clients)
+            {
+                Console.WriteLine($"{c.fname} {c.lname}");
+            }
+        }
+
+        // ShowCar: Display the of each car object in the cars list inherited through inventory
+        public void ShowVehicle()
+        {
+            Console.WriteLine("Vehicles: ");
+            foreach (Vehicle v in vehicles)
+            {
+                Console.WriteLine($"{v.year} {v.make} {v.model}");
+            }
+        }
+
+        // ShowDealership: Display all dealership information inherited through inventory class.
+        public void ShowDealership()
+        {
+            Console.WriteLine("Dealership Information");
+            ShowVehicle();
+            Console.WriteLine();
+            ShowEmployee();
+            Console.WriteLine();
+            ShowClient();
+        }
+    }
+
+    class Program
+    {
+        static void Main()
+        {
+            var inv = new Inventory();
+            var dealer = new Dealership();
+            string input;
+
+            // This is some basic data so you don't have to add everytime
+            // Format: Firstname, Lastname 
+            Console.WriteLine("Employee Additons:");
+            inv.AddEmployee("Mark", "Wong");
+            inv.AddEmployee("Jeff", "Halbert");
+            inv.AddEmployee("John", "Jones");
+            inv.AddEmployee("Mona", "Limbar");
+            inv.AddEmployee("Rabia", "Forn");
+            inv.AddEmployee("Ryan", "Graves");
+            inv.AddEmployee("Mona", "Limbar");      // Comes up invalid as a duplicate *onpurpose*
+            inv.RemoveEmployee("John", "Jones");
+            Console.WriteLine();
+
+            // Format: Firstname, Lastname 
+            Console.WriteLine("Client Additions:");
+            inv.AddClient("Nora", "Lee");
+            inv.AddClient("Joshua", "Charlie");
+            inv.AddClient("Kathleen", "Darlin");
+            inv.AddClient("Farhana", "Wood");
+            inv.AddClient("Lisa", "Britton");
+            inv.AddClient("Huxley", "Graham");
+            inv.AddClient("Josiah", "Cairns");
+            inv.AddClient("Rayan", "Galloway");
+            inv.AddClient("Kathleen", "Darlin");    // Comes up invalid as a duplicate *onpurpose*
+            inv.AddClient("Sasha", "Garst");
+            inv.RemoveClient("Sasha", "Garst");
+            Console.WriteLine();
+
+            // Format: Make, Model, Year
+            Console.WriteLine("Car Additions:");
+            inv.AddCar("Ford", "Taurus", 2012);
+            inv.AddCar("Ford", "Taurus", 2012);     // Comes up invalid as a duplicate *onpurpose*
+            inv.AddCar("Toyota", "Prius", 2015);
+            inv.AddCar("Buick", "Regal", 2009);
+            inv.AddCar("Honda", "Civic", 2009);
+            inv.AddCar("Nissan", "Sentra", 2007);
+            inv.AddCar("Toyota", "Camry", 2014);
+            inv.AddCar("Acura", "RDX", 2009);
+            inv.AddCar("Hyundai", "Sonata", 2019);
+            inv.AddCar("Jeep","Wrangler", 2018);
+            inv.AddCar("Honda", "Civic", 2005);
+            inv.AddCar("Mercedes", "Benz", 2016);
+            inv.AddCar("Saturn", "Ion", 2006);
+            inv.AddCar("Ford", "F-350", 2005);
+            inv.AddCar("Subaru", "Forester", 2011);
+            inv.AddCar("Honda", "Fit", 2010);
+            inv.RemoveCar("Mercedes", "Benz", 2016);
+            inv.AddCar("Cadillac", "Deville", 1999);
+
+            // Format: Client Firstname, Client Lastname, Make, Model, Year, Cost
+            dealer.SellCar("Nora", "Lee", "Buick", "Regal", 2009, 3400);
+            dealer.SellCar("Joshua", "Charlie", "Cadillac", "Deville", 1999, 900);
+            dealer.SellCar("Lisa", "Britton", "Toyota", "Prius", 2015, 7000);
+            dealer.SellCar("Huxley", "Graham", "Acura", "RDX", 2009, 2200);
+            dealer.SellCar("Ryan", "Galloway", "Jeep", "Wrangler", 2018, 12000);
+            dealer.SellCar("Joshua", "Charlie", "Honda", "Civic", 2005, 1900);
+            dealer.SellCar("Farham", "Wood", "Nissan", "Sentra", 2007, 1600);
+            dealer.SellCar("Rayan", "Galloway", "Honda", "Civic", 2009, 2500);
+            dealer.SellCar("Josiah", "Cairns", "Hyundai", "Sonata", 2019, 14500);
+            Console.WriteLine();
+            dealer.SellCar("Kathleen", "Darlin", "Buick", "Regal", 2009, 3400); // Comes up invalid because information does not exist *onpurpose*
+
+            do{
+                Console.Clear();    // Clears the screen so you don't have to see it every run time, can be commented out to see what's happening above.
+                Console.WriteLine("*Dealership Management System*");
+                Console.WriteLine("\nPlease enter your desired command, if you do not know the commands please type 'help'.");
+                Console.WriteLine();
+
+                Console.Write("Command: ");
+                input = Console.ReadLine();
+                Console.WriteLine();
+
+                if(input == "help")
+                {
+                    Console.WriteLine("Show Commands:");
+                    Console.WriteLine("'show all' displays all dealership information");
+                    Console.WriteLine("'show vehicles' displays all cars available");
+                    Console.WriteLine("'show clients' displays all clients");
+                    Console.WriteLine("'show employees' displays all employees");
+                    Console.WriteLine("'show purchased' displays all vehicles sold all the dealership");
+                    Console.WriteLine("\nAdd Commands:");
+                    Console.WriteLine("'add client' to add a client");
+                    Console.WriteLine("'add employee' to add an employee");
+                    Console.WriteLine("'add vehicle' to add a vehicle");
+                    Console.WriteLine("\nDelete Commands:");
+                    Console.WriteLine("'delete client' to delete a client");
+                    Console.WriteLine("'delete employee' to delete an employee");
+                    Console.WriteLine("'delete vehicle' to delete a vehicle");
+                    Console.WriteLine("\nSale Command:");
+                    Console.WriteLine("'sell vehicle' to sell a vehicle to a customer");
+                    Console.WriteLine("\nType exit to leave at any time..");
+                }
+                if(input == "show all")
+                {
+                    dealer.ShowDealership();
+                }
+                if (input == "show vehicles")
+                {
+                    dealer.ShowVehicle();
+                }
+                if (input == "show clients")
+                {
+                    dealer.ShowClient();
+                }
+                if (input == "show employees")
+                {
+                    dealer.ShowEmployee();
+                }
+                if(input == "add client")
+                {
+                    Console.WriteLine("Please enter your clients first name:");
+                    string fname = Console.ReadLine();
+                    Console.WriteLine("Please enter your clients last name:");
+                    string lname = Console.ReadLine();
+
+                    dealer.AddClient(fname, lname);
+                }
+                if (input == "delete client")
+                {
+                    Console.WriteLine("Please enter your clients first name:");
+                    string fname = Console.ReadLine();
+                    Console.WriteLine("Please enter your clients last name:");
+                    string lname = Console.ReadLine();
+
+                    dealer.RemoveClient(fname, lname);
+                }
+                if (input == "add employee")
+                {
+                    Console.WriteLine("Please enter your employees first name:");
+                    string fname = Console.ReadLine();
+                    Console.WriteLine("Please enter your employees last name:");
+                    string lname = Console.ReadLine();
+
+                    dealer.AddEmployee(fname, lname);
+                }
+                if (input == "delete employee")
+                {
+                    Console.WriteLine("Please enter your clients first name:");
+                    string fname = Console.ReadLine();
+                    Console.WriteLine("Please enter your clients last name:");
+                    string lname = Console.ReadLine();
+
+                    dealer.RemoveEmployee(fname, lname);
+                }
+                if (input == "add vehicle")
+                {
+                    Console.WriteLine("Please enter the vehicles make:");
+                    string make = Console.ReadLine();
+                    Console.WriteLine("Please enter the vehicles model:");
+                    string model = Console.ReadLine();
+                    Console.WriteLine("Please enter the vehicles year:");
+                    string yearSTR = Console.ReadLine();
+                    int year = Convert.ToInt32(yearSTR);
+
+                    dealer.AddCar(make, model, year);
+                }
+                if (input == "delete vehicle")
+                {
+                    Console.WriteLine("Please enter the vehicles make:");
+                    string make = Console.ReadLine();
+                    Console.WriteLine("Please enter the vehicles model:");
+                    string model = Console.ReadLine();
+                    Console.WriteLine("Please enter the vehicles year:");
+                    string yearSTR = Console.ReadLine();
+                    int year = Convert.ToInt32(yearSTR);
+
+                    dealer.RemoveCar(make, model, year);
+                }
+                if(input == "sell vehicle")
+                {
+                    Console.WriteLine("In order to sell a vehicle we must gather some information..");
+                    Console.WriteLine("We need your clients information:");
+                    Console.WriteLine("Enter your clients first name:");
+                    string fname = Console.ReadLine();
+                    Console.WriteLine("Enter your clients last name:");
+                    string lname = Console.ReadLine();
+
+                    Console.WriteLine("We need the vehicles information:");
+                    Console.WriteLine("Enter the vehicles make:");
+                    string make = Console.ReadLine();
+                    Console.WriteLine("Enter the vehicles model:");
+                    string model = Console.ReadLine();
+                    Console.WriteLine("Enter the vehicles year:");
+                    string yearSTR = Console.ReadLine();
+                    int year = Convert.ToInt32(yearSTR);
+
+                    Console.WriteLine("Enter the cost of the vehicle:");
+                    string costSTR = Console.ReadLine();
+                    int cost = Convert.ToInt32(costSTR);
+
+                    dealer.SellCar(fname, lname, make, model, year, cost);
+                }
+                if(input == "show purchased")
+                {
+                    dealer.ShowPurchased();
+                }
+
+                Console.WriteLine("\n*Press enter before you type next..*");
+                Console.ReadKey();
+            } while (input != "exit");
+        }
+    }
+}
