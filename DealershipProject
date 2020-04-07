@@ -245,9 +245,10 @@ namespace DealershipProject
                 Console.WriteLine("Invalid information, this cannot be sold. Please check all your information and try again..");
         }
 
-        public double CalcComission(double cost)
+        // CalcComission: Basic function to calculate comission made and return that double
+        public double CalcComission(double sale)
         {
-            double comission = cost * 0.05;
+            double comission = sale * 0.05;
             return comission;
         }
 
@@ -383,7 +384,7 @@ namespace DealershipProject
             dealer.SellCar("Nora", "Lee", "Buick", "Regal", 2009, 3400, "Mona", "Limbar");
             dealer.SellCar("Joshua", "Charlie", "Cadillac", "Deville", 1999, 900, "Mark", "Wong");
             dealer.SellCar("Lisa", "Britton", "Toyota", "Prius", 2015, 7000, "Rabia", "Forn");
-            dealer.SellCar("Huxley", "Graham", "Acura", "RDX", 2009, 2200, "Mona", "Limbar");
+            dealer.SellCar("Huxley", "Graham", "Acura", "RDX", 2009, 2200, "Mona", "Limbar");   // Need to handle duplicates for comission sales
             dealer.SellCar("Ryan", "Galloway", "Jeep", "Wrangler", 2018, 12000, "Ryan", "Graves");
             dealer.SellCar("Joshua", "Charlie", "Honda", "Civic", 2005, 1900, "Jeff", "Halbert");
             dealer.SellCar("Farham", "Wood", "Nissan", "Sentra", 2007, 1600, "Mark", "Wong");
@@ -422,7 +423,7 @@ namespace DealershipProject
                     Console.WriteLine("'delete vehicle' to delete a vehicle");
                     Console.WriteLine("\nSale Command:");
                     Console.WriteLine("'sell vehicle' to sell a vehicle to a customer");
-                    Console.WriteLine("\nType exit to leave at any time..");
+                    Console.WriteLine("\nType exit and then enter to leave at any time..");
                 }
                 if(input == "show all")
                 {
@@ -443,6 +444,10 @@ namespace DealershipProject
                 if (input == "show comissions")
                 {
                     dealer.ShowComission();
+                }
+                if (input == "show purchased")
+                {
+                    dealer.ShowPurchased();
                 }
                 if (input == "add client")
                 {
@@ -508,15 +513,15 @@ namespace DealershipProject
                 {
                     Console.WriteLine("In order to sell a vehicle we must gather some information..");
                     Console.WriteLine("We need the infromation of the employee who sold the vehicle:");
-                    Console.WriteLine("Enter your first name:");
+                    Console.WriteLine("Enter the employees first name:");
                     string efname = Console.ReadLine();
-                    Console.WriteLine("Enter your last name:");
+                    Console.WriteLine("Enter the employees last name:");
                     string elname = Console.ReadLine();
 
-                    Console.WriteLine("We need your clients information:");
-                    Console.WriteLine("Enter your clients first name:");
+                    Console.WriteLine("We need the clients information:");
+                    Console.WriteLine("Enter the clients first name:");
                     string cfname = Console.ReadLine();
-                    Console.WriteLine("Enter your clients last name:");
+                    Console.WriteLine("Enter the clients last name:");
                     string clname = Console.ReadLine();
 
                     Console.WriteLine("We need the vehicles information:");
@@ -534,11 +539,6 @@ namespace DealershipProject
 
                     dealer.SellCar(cfname, clname, make, model, year, cost, efname, elname);
                 }
-                if(input == "show purchased")
-                {
-                    dealer.ShowPurchased();
-                }
-
                 Console.WriteLine("\n*Press enter before you type next..*");
                 Console.ReadKey();
             } while (input != "exit");
