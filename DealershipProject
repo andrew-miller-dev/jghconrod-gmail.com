@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 
@@ -21,23 +22,50 @@ namespace DealershipProject
     class Employee
     {
         // Possible additions: default id for each employee
-        public string fname;
-        public string lname;
+        public string fname { get; set; }
+        public string lname { get; set; }
         public Employee(string Fname, string Lname)
         {
             fname = Fname; lname = Lname;
         }
     }
-     class Client
+    class Client
     {
-        // Possible additions: default id for each client, telephone, email
+        // Possible additions: default id for each client
         public string fname;
         public string lname;
-        public Client(string Fname, string Lname)
+        public string telephone;
+        public string email;
+        
+        public Client(string Fname, string Lname, string phoneNumber, string email)
         {
-            fname = Fname; lname = Lname;
+            fname = Fname; lname = Lname; telephone = phoneNumber; this.email = email;
+            
         }
-    }  
+        public void Buy()
+        {
+
+        }
+
+        public void Rent()
+        {
+
+        }
+        public void Return()
+        {
+
+        }
+        public void ClientInfo(Client client)
+        {
+            Console.WriteLine("  ****************************");
+            Console.WriteLine("  *  Displaying client info **");
+            Console.WriteLine("  ****************************");
+            Console.WriteLine("\nName: " + fname + " " + lname);
+            Console.WriteLine("Telephone: " + telephone);
+            Console.WriteLine("E-mail: " + email);
+
+        }
+    }
     class VehiclePurchase
     {
         public Client client;
@@ -82,13 +110,13 @@ namespace DealershipProject
 
             foreach (Employee e in employees)
             {
-                if(e.fname == fname & e.lname == lname)
+                if (e.fname == fname & e.lname == lname)
                 {
                     duplicate = true;
                 }
             }
 
-            if(duplicate == false)
+            if (duplicate == false)
             {
                 employees.Add(employee);
                 Console.WriteLine($"{fname} {lname} has been added successfully!");
@@ -115,9 +143,9 @@ namespace DealershipProject
         /* AddClient: Adds a client object to the clients list.
          * This method uses a bool to check if the information is a duplicate before adding to the list.
          */
-        public void AddClient(string fname, string lname)
+        public void AddClient(string fname, string lname, string phone, string email)
         {
-            var client = new Client(fname, lname);
+            var client = new Client(fname, lname, phone, email);
             bool duplicate = false;
 
             foreach (Client c in clients)
@@ -203,31 +231,33 @@ namespace DealershipProject
          * This method removes the car input from the list cars, and adds the car/client information to a list called vehiclesPurchased.
          * It checks with a bool if the car and client are present in the list before allowing them to be removed.
          */
-        public void SellCar(string cfname, string clname, string make, string model, int year, int cost, string efname, string elname)
+
+            // I suggest changing this SellCar function to accept only the last name of a client, it'd make it easier
+        public void SellCar(string cfname, string clname, string phone, string email, string make, string model, int year, int cost, string efname, string elname)
         {
-            var client = new Client(cfname, clname);
+            var client = new Client(cfname, clname, phone, email);
             var vehicle = new Vehicle(make, model, year);
             var employee = new Employee(efname, elname);
 
             bool carPresent = false;
             bool clientPresent = false;
 
-            foreach(Client c in clients)
+            foreach (Client c in clients)
             {
-                if(c.fname == cfname & c.lname == clname)
+                if (c.fname == cfname & c.lname == clname)
                 {
                     clientPresent = true;
                 }
             }
-            foreach(Vehicle v in vehicles)
+            foreach (Vehicle v in vehicles)
             {
-                if(v.make == make & v.model == model & v.year == year)
+                if (v.make == make & v.model == model & v.year == year)
                 {
                     carPresent = true;
                 }
             }
 
-            if(clientPresent == true & carPresent == true)
+            if (clientPresent == true & carPresent == true)
             {
                 var vehiclePurchase = new VehiclePurchase(client, vehicle, cost, employee);
                 vehiclesPurchased.Add(vehiclePurchase);
@@ -258,7 +288,7 @@ namespace DealershipProject
             int totalMade = 0;
 
             Console.WriteLine("Vehicles purchased at this dealership:");
-            foreach(VehiclePurchase vp in vehiclesPurchased)
+            foreach (VehiclePurchase vp in vehiclesPurchased)
             {
                 Console.WriteLine($"Client: {vp.client.fname} {vp.client.lname}, Vehicle: {vp.vehicle.year} {vp.vehicle.make} {vp.vehicle.model}, " +
                                   $"Cost: ${vp.cost}, Sold by: {vp.employee.fname} {vp.employee.lname}");
@@ -346,16 +376,16 @@ namespace DealershipProject
 
             // Format: Firstname, Lastname 
             Console.WriteLine("Client Additions:");
-            inv.AddClient("Nora", "Lee");
-            inv.AddClient("Joshua", "Charlie");
-            inv.AddClient("Kathleen", "Darlin");
-            inv.AddClient("Farhana", "Wood");
-            inv.AddClient("Lisa", "Britton");
-            inv.AddClient("Huxley", "Graham");
-            inv.AddClient("Josiah", "Cairns");
-            inv.AddClient("Rayan", "Galloway");
-            inv.AddClient("Kathleen", "Darlin");    // Comes up invalid as a duplicate *onpurpose*
-            inv.AddClient("Sasha", "Garst");
+            inv.AddClient("Nora", "Lee", "4038165555", "nora@gmail.com");
+            inv.AddClient("Joshua", "Charlie", "4038168989", "joshua@gmail.com");
+            inv.AddClient("Kathleen", "Darlin", "4037742536", "k.darlin@gmail.com");
+            inv.AddClient("Farhana", "Wood", "4063251245", "woodfarhana@hotmail.com");
+            inv.AddClient("Lisa", "Britton", "4038569658", "lisabritton@outlook.com");
+            inv.AddClient("Huxley", "Graham", "4036669998", "g.huxley323@mybvc.ca");
+            inv.AddClient("Josiah", "Cairns", "4036658989", "josiah@hotmail.com");
+            inv.AddClient("Rayan", "Galloway", "4038894478", "galloway@yahoo.com");
+            inv.AddClient("Kathleen", "Darlin", "4037742536", "k.darlin@gmail.com");    // Comes up invalid as a duplicate *onpurpose*
+            inv.AddClient("Sasha", "Garst", "4038586545", "ggggarst@mymail.com");
             inv.RemoveClient("Sasha", "Garst");
             Console.WriteLine();
 
@@ -370,7 +400,7 @@ namespace DealershipProject
             inv.AddCar("Toyota", "Camry", 2014);
             inv.AddCar("Acura", "RDX", 2009);
             inv.AddCar("Hyundai", "Sonata", 2019);
-            inv.AddCar("Jeep","Wrangler", 2018);
+            inv.AddCar("Jeep", "Wrangler", 2018);
             inv.AddCar("Honda", "Civic", 2005);
             inv.AddCar("Mercedes", "Benz", 2016);
             inv.AddCar("Saturn", "Ion", 2006);
@@ -381,22 +411,26 @@ namespace DealershipProject
             inv.AddCar("Cadillac", "Deville", 1999);
 
             // Format: Client Firstname, Client Lastname, Make, Model, Year, Cost, Employee Firsname, Employee lastname
-            dealer.SellCar("Nora", "Lee", "Buick", "Regal", 2009, 3400, "Mona", "Limbar");
-            dealer.SellCar("Joshua", "Charlie", "Cadillac", "Deville", 1999, 900, "Mark", "Wong");
-            dealer.SellCar("Lisa", "Britton", "Toyota", "Prius", 2015, 7000, "Rabia", "Forn");
-            dealer.SellCar("Huxley", "Graham", "Acura", "RDX", 2009, 2200, "Mona", "Limbar");   // Need to handle duplicates for comission sales
-            dealer.SellCar("Ryan", "Galloway", "Jeep", "Wrangler", 2018, 12000, "Ryan", "Graves");
-            dealer.SellCar("Joshua", "Charlie", "Honda", "Civic", 2005, 1900, "Jeff", "Halbert");
-            dealer.SellCar("Farham", "Wood", "Nissan", "Sentra", 2007, 1600, "Mark", "Wong");
-            dealer.SellCar("Rayan", "Galloway", "Honda", "Civic", 2009, 2500, "Rabia", "Forn");
-            dealer.SellCar("Josiah", "Cairns", "Hyundai", "Sonata", 2019, 14500, "John", "Jones");
+            dealer.SellCar("Nora", "Lee", "4038165555", "nora@gmail.com", "Buick", "Regal", 2009, 3400, "Mona", "Limbar");
+            dealer.SellCar("Joshua", "Charlie", "4038168989", "joshua@gmail.com", "Cadillac", "Deville", 1999, 900, "Mark", "Wong");
+            dealer.SellCar("Lisa", "Britton", "4038569658", "lisabritton@outlook.com", "Toyota", "Prius", 2015, 7000, "Rabia", "Forn");
+            dealer.SellCar("Huxley", "Graham", "4036669998", "g.huxley323@mybvc.ca", "Acura", "RDX", 2009, 2200, "Mona", "Limbar");   // Need to handle duplicates for comission sales
+            dealer.SellCar("Ryan", "Galloway", "4038894478", "galloway@yahoo.com", "Jeep", "Wrangler", 2018, 12000, "Ryan", "Graves");
+            dealer.SellCar("Joshua", "Charlie", "4038168989", "joshua@gmail.com", "Honda", "Civic", 2005, 1900, "Jeff", "Halbert");
+            dealer.SellCar("Farhana", "Wood", "4063251245", "woodfarhana@hotmail.com", "Nissan", "Sentra", 2007, 1600, "Mark", "Wong");
+            dealer.SellCar("Rayan", "Galloway", "4038894478", "galloway@yahoo.com", "Honda", "Civic", 2009, 2500, "Rabia", "Forn");
+            dealer.SellCar("Josiah", "Cairns", "4036658989", "josiah@hotmail.com", "Hyundai", "Sonata", 2019, 14500, "John", "Jones");
             Console.WriteLine();
-            dealer.SellCar("Kathleen", "Darlin", "Buick", "Regal", 2009, 3400, "Mark", "Wong"); // Comes up invalid because information does not exist *onpurpose*
+            dealer.SellCar("Kathleen", "Darlin", "4037742536", "k.darlin@gmail.com", "Buick", "Regal", 2009, 3400, "Mark", "Wong"); // Comes up invalid because information does not exist *onpurpose*
 
             do
             {
                 Console.Clear();    // Clears the screen so you don't have to see it every run time, can be commented out to see what's happening above.
-                Console.WriteLine("*Dealership Management System*");
+                Console.WriteLine("              **********************************");
+                Console.WriteLine("              *                                *");
+                Console.WriteLine("              *  Dealership Management System  *");
+                Console.WriteLine("              *                                *");
+                Console.WriteLine("              **********************************");
                 Console.WriteLine("\nPlease enter your desired command, if you do not know the commands please type 'help'.");
                 Console.WriteLine();
 
@@ -404,7 +438,7 @@ namespace DealershipProject
                 input = Console.ReadLine();
                 Console.WriteLine();
 
-                if(input == "help")
+                if (input == "help")
                 {
                     Console.WriteLine("Show Commands:");
                     Console.WriteLine("'show all' displays all dealership information");
@@ -425,7 +459,7 @@ namespace DealershipProject
                     Console.WriteLine("'sell vehicle' to sell a vehicle to a customer");
                     Console.WriteLine("\nType exit and then enter to leave at any time..");
                 }
-                if(input == "show all")
+                if (input == "show all")
                 {
                     dealer.ShowDealership();
                 }
@@ -455,8 +489,12 @@ namespace DealershipProject
                     string fname = Console.ReadLine();
                     Console.WriteLine("Please enter your clients last name:");
                     string lname = Console.ReadLine();
+                    Console.WriteLine("Please enter your clients telephone number:");
+                    string phone = Console.ReadLine();
+                    Console.WriteLine("Please enter your clients E-mail:");
+                    string email = Console.ReadLine();
 
-                    dealer.AddClient(fname, lname);
+                    dealer.AddClient(fname, lname, phone, email);
                 }
                 if (input == "delete client")
                 {
@@ -509,7 +547,7 @@ namespace DealershipProject
 
                     dealer.RemoveCar(make, model, year);
                 }
-                if(input == "sell vehicle")
+                if (input == "sell vehicle")
                 {
                     Console.WriteLine("In order to sell a vehicle we must gather some information..");
                     Console.WriteLine("We need the infromation of the employee who sold the vehicle:");
@@ -523,6 +561,11 @@ namespace DealershipProject
                     string cfname = Console.ReadLine();
                     Console.WriteLine("Enter the clients last name:");
                     string clname = Console.ReadLine();
+                    Console.WriteLine("Please enter your clients telephone number:");
+                    string phone = Console.ReadLine();
+                    Console.WriteLine("Please enter your clients E-mail:");
+                    string email = Console.ReadLine();
+
 
                     Console.WriteLine("We need the vehicles information:");
                     Console.WriteLine("Enter the vehicles make:");
@@ -537,7 +580,7 @@ namespace DealershipProject
                     string costSTR = Console.ReadLine();
                     int cost = Convert.ToInt32(costSTR);
 
-                    dealer.SellCar(cfname, clname, make, model, year, cost, efname, elname);
+                    dealer.SellCar(cfname, clname, phone, email, make, model, year, cost, efname, elname);
                 }
                 Console.WriteLine("\n*Press enter before you type next..*");
                 Console.ReadKey();
