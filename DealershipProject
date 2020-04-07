@@ -379,15 +379,6 @@ namespace DealershipProject
             inv.RemoveCar("Mercedes", "Benz", 2016);
             inv.AddCar("Cadillac", "Deville", 1999);
 
-            inv.AddEmployee("Mark", "Wong");
-            inv.AddEmployee("Jeff", "Halbert");
-            inv.AddEmployee("John", "Jones");
-            inv.AddEmployee("Mona", "Limbar");
-            inv.AddEmployee("Rabia", "Forn");
-            inv.AddEmployee("Ryan", "Graves");
-            inv.AddEmployee("Mona", "Limbar");      // Comes up invalid as a duplicate *onpurpose*
-            inv.RemoveEmployee("John", "Jones");
-
             // Format: Client Firstname, Client Lastname, Make, Model, Year, Cost, Employee Firsname, Employee lastname
             dealer.SellCar("Nora", "Lee", "Buick", "Regal", 2009, 3400, "Mona", "Limbar");
             dealer.SellCar("Joshua", "Charlie", "Cadillac", "Deville", 1999, 900, "Mark", "Wong");
