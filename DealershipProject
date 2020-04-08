@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 
@@ -36,24 +35,40 @@ namespace DealershipProject
         public string lname;
         public string telephone;
         public string email;
-        
+        public List<Vehicle> carsBought;
+        public List<Vehicle> carsRented;
+
         public Client(string Fname, string Lname, string phoneNumber, string email)
         {
-            fname = Fname; lname = Lname; telephone = phoneNumber; this.email = email;
-            
-        }
-        public void Buy()
-        {
+            fname = Fname; 
+            lname = Lname; 
+            telephone = phoneNumber; 
+            this.email = email;
+            this.carsBought = new List<Vehicle>();
+            this.carsRented = new List<Vehicle>();
 
         }
-
-        public void Rent()
+        public void Buy(Vehicle car)
         {
-
+            carsBought.Add(car);
+            Console.WriteLine($"Client {fname} {lname} bought the {car.year} {car.make} {car.model}.");
         }
-        public void Return()
-        {
 
+        public void Rent(Vehicle car)
+        {
+            carsRented.Add(car);
+            Console.WriteLine($"Client {fname} {lname} rented the {car.year} {car.make} {car.model}.");
+        }
+        public void Return(Vehicle car)
+        {
+            for (var i = 0; i < carsRented.Count; i++)
+            {
+                if (carsRented[i].make == car.make && carsRented[i].model == car.model && carsRented[i].year == car.year)
+                {
+                    carsRented.RemoveAt(i);
+                    Console.WriteLine($"Client {fname} {lname} successfully returned the {car.year} {car.make} {car.model}.");
+                }
+            }
         }
         public void ClientInfo(Client client)
         {
@@ -68,13 +83,16 @@ namespace DealershipProject
     }
     class VehiclePurchase
     {
-        public Client client;
+        public string lastName;
         public Vehicle vehicle;
         public int cost;
         public Employee employee;
-        public VehiclePurchase(Client Client, Vehicle Vehicle, int Cost, Employee Employee)
+        public VehiclePurchase(String lName, Vehicle Vehicle, int Cost, Employee Employee)
         {
-            client = Client; vehicle = Vehicle; cost = Cost; employee = Employee;
+            lastName = lName; 
+            vehicle = Vehicle; 
+            cost = Cost; 
+            employee = Employee;
         }
     }
     class ComissionEarned
@@ -232,21 +250,22 @@ namespace DealershipProject
          * It checks with a bool if the car and client are present in the list before allowing them to be removed.
          */
 
-            // I suggest changing this SellCar function to accept only the last name of a client, it'd make it easier
-        public void SellCar(string cfname, string clname, string phone, string email, string make, string model, int year, int cost, string efname, string elname)
+        // I suggest changing this SellCar function to accept only the last name of a client, it'd make it easier
+        public void SellCar(string clname, string make, string model, int year, int cost, string efname, string elname)
         {
-            var client = new Client(cfname, clname, phone, email);
+            //var client = new Client(cfname, clname, phone, email);
             var vehicle = new Vehicle(make, model, year);
             var employee = new Employee(efname, elname);
-
+            
             bool carPresent = false;
             bool clientPresent = false;
 
             foreach (Client c in clients)
             {
-                if (c.fname == cfname & c.lname == clname)
+                if (c.lname == clname)
                 {
                     clientPresent = true;
+                    
                 }
             }
             foreach (Vehicle v in vehicles)
@@ -259,14 +278,14 @@ namespace DealershipProject
 
             if (clientPresent == true & carPresent == true)
             {
-                var vehiclePurchase = new VehiclePurchase(client, vehicle, cost, employee);
+                var vehiclePurchase = new VehiclePurchase(clname, vehicle, cost, employee);
                 vehiclesPurchased.Add(vehiclePurchase);
 
                 double comission = CalcComission(cost);
                 var comissionEarned = new ComissionEarned(employee, comission);
                 comissionsEarned.Add(comissionEarned);
 
-                Console.WriteLine($"{cfname} {clname} has purchased a {year} {make} {model} for ${cost}.");
+                Console.WriteLine($"Client {clname} has purchased a {year} {make} {model} for ${cost}.");
                 Console.WriteLine($"{efname} {elname} has made earned ${comission} in comission.");
 
                 RemoveCar(make, model, year);
@@ -290,7 +309,7 @@ namespace DealershipProject
             Console.WriteLine("Vehicles purchased at this dealership:");
             foreach (VehiclePurchase vp in vehiclesPurchased)
             {
-                Console.WriteLine($"Client: {vp.client.fname} {vp.client.lname}, Vehicle: {vp.vehicle.year} {vp.vehicle.make} {vp.vehicle.model}, " +
+                Console.WriteLine($"Client: {vp.lastName}, Vehicle: {vp.vehicle.year} {vp.vehicle.make} {vp.vehicle.model}, " +
                                   $"Cost: ${vp.cost}, Sold by: {vp.employee.fname} {vp.employee.lname}");
                 totalMade += vp.cost;
             }
@@ -411,17 +430,17 @@ namespace DealershipProject
             inv.AddCar("Cadillac", "Deville", 1999);
 
             // Format: Client Firstname, Client Lastname, Make, Model, Year, Cost, Employee Firsname, Employee lastname
-            dealer.SellCar("Nora", "Lee", "4038165555", "nora@gmail.com", "Buick", "Regal", 2009, 3400, "Mona", "Limbar");
-            dealer.SellCar("Joshua", "Charlie", "4038168989", "joshua@gmail.com", "Cadillac", "Deville", 1999, 900, "Mark", "Wong");
-            dealer.SellCar("Lisa", "Britton", "4038569658", "lisabritton@outlook.com", "Toyota", "Prius", 2015, 7000, "Rabia", "Forn");
-            dealer.SellCar("Huxley", "Graham", "4036669998", "g.huxley323@mybvc.ca", "Acura", "RDX", 2009, 2200, "Mona", "Limbar");   // Need to handle duplicates for comission sales
-            dealer.SellCar("Ryan", "Galloway", "4038894478", "galloway@yahoo.com", "Jeep", "Wrangler", 2018, 12000, "Ryan", "Graves");
-            dealer.SellCar("Joshua", "Charlie", "4038168989", "joshua@gmail.com", "Honda", "Civic", 2005, 1900, "Jeff", "Halbert");
-            dealer.SellCar("Farhana", "Wood", "4063251245", "woodfarhana@hotmail.com", "Nissan", "Sentra", 2007, 1600, "Mark", "Wong");
-            dealer.SellCar("Rayan", "Galloway", "4038894478", "galloway@yahoo.com", "Honda", "Civic", 2009, 2500, "Rabia", "Forn");
-            dealer.SellCar("Josiah", "Cairns", "4036658989", "josiah@hotmail.com", "Hyundai", "Sonata", 2019, 14500, "John", "Jones");
+            dealer.SellCar("Lee", "Buick", "Regal", 2009, 3400, "Mona", "Limbar");
+            dealer.SellCar("Charlie", "Cadillac", "Deville", 1999, 900, "Mark", "Wong");
+            dealer.SellCar("Britton", "Toyota", "Prius", 2015, 7000, "Rabia", "Forn");
+            dealer.SellCar("Graham", "Acura", "RDX", 2009, 2200, "Mona", "Limbar");   // Need to handle duplicates for comission sales
+            dealer.SellCar("Galloway", "Jeep", "Wrangler", 2018, 12000, "Ryan", "Graves");
+            dealer.SellCar("Charlie", "Honda", "Civic", 2005, 1900, "Jeff", "Halbert");
+            dealer.SellCar("Wood", "Nissan", "Sentra", 2007, 1600, "Mark", "Wong");
+            dealer.SellCar("Galloway", "Honda", "Civic", 2009, 2500, "Rabia", "Forn");
+            dealer.SellCar("Cairns", "Hyundai", "Sonata", 2019, 14500, "John", "Jones");
             Console.WriteLine();
-            dealer.SellCar("Kathleen", "Darlin", "4037742536", "k.darlin@gmail.com", "Buick", "Regal", 2009, 3400, "Mark", "Wong"); // Comes up invalid because information does not exist *onpurpose*
+            dealer.SellCar("Darlin", "Buick", "Regal", 2009, 3400, "Mark", "Wong"); // Comes up invalid because information does not exist *onpurpose*
 
             do
             {
@@ -550,20 +569,20 @@ namespace DealershipProject
                 if (input == "sell vehicle")
                 {
                     Console.WriteLine("In order to sell a vehicle we must gather some information..");
-                    Console.WriteLine("We need the infromation of the employee who sold the vehicle:");
+                    Console.WriteLine("We need the information of the employee who sold the vehicle:");
                     Console.WriteLine("Enter the employees first name:");
                     string efname = Console.ReadLine();
                     Console.WriteLine("Enter the employees last name:");
                     string elname = Console.ReadLine();
 
-                    Console.WriteLine("We need the clients information:");
-                    Console.WriteLine("Enter the clients first name:");
+                    Console.WriteLine("We also need the client's information:");
+                    Console.WriteLine("Enter the client first name:");
                     string cfname = Console.ReadLine();
-                    Console.WriteLine("Enter the clients last name:");
+                    Console.WriteLine("Enter the client last name:");
                     string clname = Console.ReadLine();
-                    Console.WriteLine("Please enter your clients telephone number:");
+                    Console.WriteLine("Please enter your client telephone number:");
                     string phone = Console.ReadLine();
-                    Console.WriteLine("Please enter your clients E-mail:");
+                    Console.WriteLine("Please enter your client E-mail:");
                     string email = Console.ReadLine();
 
 
@@ -580,7 +599,7 @@ namespace DealershipProject
                     string costSTR = Console.ReadLine();
                     int cost = Convert.ToInt32(costSTR);
 
-                    dealer.SellCar(cfname, clname, phone, email, make, model, year, cost, efname, elname);
+                    dealer.SellCar(clname, make, model, year, cost, efname, elname);
                 }
                 Console.WriteLine("\n*Press enter before you type next..*");
                 Console.ReadKey();
