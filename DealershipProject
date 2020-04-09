@@ -40,9 +40,9 @@ namespace DealershipProject
 
         public Client(string Fname, string Lname, string phoneNumber, string email)
         {
-            fname = Fname; 
-            lname = Lname; 
-            telephone = phoneNumber; 
+            fname = Fname;
+            lname = Lname;
+            telephone = phoneNumber;
             this.email = email;
             this.carsBought = new List<Vehicle>();
             this.carsRented = new List<Vehicle>();
@@ -89,9 +89,9 @@ namespace DealershipProject
         public Employee employee;
         public VehiclePurchase(String lName, Vehicle Vehicle, int Cost, Employee Employee)
         {
-            lastName = lName; 
-            vehicle = Vehicle; 
-            cost = Cost; 
+            lastName = lName;
+            vehicle = Vehicle;
+            cost = Cost;
             employee = Employee;
         }
     }
@@ -256,7 +256,7 @@ namespace DealershipProject
             //var client = new Client(cfname, clname, phone, email);
             var vehicle = new Vehicle(make, model, year);
             var employee = new Employee(efname, elname);
-            
+
             bool carPresent = false;
             bool clientPresent = false;
 
@@ -265,7 +265,7 @@ namespace DealershipProject
                 if (c.lname == clname)
                 {
                     clientPresent = true;
-                    
+
                 }
             }
             foreach (Vehicle v in vehicles)
@@ -372,17 +372,52 @@ namespace DealershipProject
         }
     }
 
+    class Services : Inventory
+    {
+        protected static List<Vehicle> vehiclesInService = new List<Vehicle>();
+
+        public void Repair(string make, string model, int year)
+        {
+            var vehicle = new Vehicle(make, model, year);
+            vehiclesInService.Add(vehicle);
+            Console.WriteLine($"Vehicle {vehicle.make} {vehicle.model} {vehicle.year} has been added to the Vehicles in Service list.");
+        }
+
+        public void Complete(string make, string model, int year) // Mark the service as finished
+        {
+            for(var i = 0; i < vehiclesInService.Count; i++)
+            {
+                if(vehiclesInService[i].make == make && vehiclesInService[i].model == model && vehiclesInService[i].year == year)
+                {
+                    vehiclesInService.RemoveAt(i);
+                    Console.WriteLine($"Vehicle {make} {model} {year} repair has been completed.");
+                }
+            }
+        }
+
+        public void DisplayAll()
+        {
+            Console.WriteLine("\nCurrent list of Vehicles in service:");
+            foreach(Vehicle v in vehiclesInService)
+            {
+                Console.WriteLine($"{v.make} {v.model} {v.year}.");
+            }
+        }
+
+    }
+
     class Program
     {
         static void Main()
         {
             var inv = new Inventory();
             var dealer = new Dealership();
+            var serv = new Services();
             string input;
 
             // This is some basic data so you don't have to add everytime
             // Format: Firstname, Lastname 
-            Console.WriteLine("Employee Additons:");
+            Console.WriteLine("Employee Additions:");
             inv.AddEmployee("Mark", "Wong");
             inv.AddEmployee("Jeff", "Halbert");
             inv.AddEmployee("John", "Jones");
@@ -426,10 +461,12 @@ namespace DealershipProject
             inv.AddCar("Ford", "F-350", 2005);
             inv.AddCar("Subaru", "Forester", 2011);
             inv.AddCar("Honda", "Fit", 2010);
+            inv.AddCar("Fiat", "Uno", 2013);
+            inv.AddCar("Hyundai", "Tucson", 2020);
             inv.RemoveCar("Mercedes", "Benz", 2016);
             inv.AddCar("Cadillac", "Deville", 1999);
 
-            // Format: Client Firstname, Client Lastname, Make, Model, Year, Cost, Employee Firsname, Employee lastname
+            // Format: Client Lastname, Make, Model, Year, Cost, Employee Firsname, Employee lastname
             dealer.SellCar("Lee", "Buick", "Regal", 2009, 3400, "Mona", "Limbar");
             dealer.SellCar("Charlie", "Cadillac", "Deville", 1999, 900, "Mark", "Wong");
             dealer.SellCar("Britton", "Toyota", "Prius", 2015, 7000, "Rabia", "Forn");
@@ -441,6 +478,10 @@ namespace DealershipProject
             dealer.SellCar("Cairns", "Hyundai", "Sonata", 2019, 14500, "John", "Jones");
             Console.WriteLine();
             dealer.SellCar("Darlin", "Buick", "Regal", 2009, 3400, "Mark", "Wong"); // Comes up invalid because information does not exist *onpurpose*
+
+            // Services 
+            serv.Repair("Fiat", "Uno", 2013);
+            serv.Repair("Hyundai", "Tucson", 2020);
 
             do
             {
@@ -476,7 +517,11 @@ namespace DealershipProject
                     Console.WriteLine("'delete vehicle' to delete a vehicle");
                     Console.WriteLine("\nSale Command:");
                     Console.WriteLine("'sell vehicle' to sell a vehicle to a customer");
-                    Console.WriteLine("\nType exit and then enter to leave at any time..");
+                    Console.WriteLine("\nServices Commands:");
+                    Console.WriteLine("'service vehicle' to repair a vehicle");
+                    Console.WriteLine("'repair vehicle' to complete the service of a vehicle");
+                    Console.WriteLine("'display services' to display the current list of services awating service");
+                    Console.WriteLine("\nType exit and then enter to leave at any time...");
                 }
                 if (input == "show all")
                 {
@@ -576,14 +621,14 @@ namespace DealershipProject
                     string elname = Console.ReadLine();
 
                     Console.WriteLine("We also need the client's information:");
-                    Console.WriteLine("Enter the client first name:");
-                    string cfname = Console.ReadLine();
+                    //Console.WriteLine("Enter the client first name:");
+                    //string cfname = Console.ReadLine();
                     Console.WriteLine("Enter the client last name:");
                     string clname = Console.ReadLine();
-                    Console.WriteLine("Please enter your client telephone number:");
-                    string phone = Console.ReadLine();
-                    Console.WriteLine("Please enter your client E-mail:");
-                    string email = Console.ReadLine();
+                    //Console.WriteLine("Please enter your client telephone number:");
+                    //string phone = Console.ReadLine();
+                    //Console.WriteLine("Please enter your client E-mail:");
+                    //string email = Console.ReadLine();
 
 
                     Console.WriteLine("We need the vehicles information:");
@@ -600,6 +645,32 @@ namespace DealershipProject
                     int cost = Convert.ToInt32(costSTR);
 
                     dealer.SellCar(clname, make, model, year, cost, efname, elname);
+                }
+                if (input == "service vehicle")
+                {
+                    Console.WriteLine("Insert the Vehicle make:");
+                    string make = Console.ReadLine();
+                    Console.WriteLine("Vehicle model:");
+                    string model = Console.ReadLine();
+                    Console.WriteLine("Vehicle year:");
+                    string yearSTR = Console.ReadLine();
+                    int year = Convert.ToInt32(yearSTR);
+                    serv.Repair(make, model, year);
+                }
+                if (input == "repair vehicle")
+                {
+                    Console.WriteLine("Insert the Vehicle make:");
+                    string make = Console.ReadLine();
+                    Console.WriteLine("Vehicle model:");
+                    string model = Console.ReadLine();
+                    Console.WriteLine("Vehicle year:");
+                    string yearSTR = Console.ReadLine();
+                    int year = Convert.ToInt32(yearSTR);
+                    serv.Complete(make, model, year);
+                }
+                if (input == "display services")
+                {
+                    serv.DisplayAll();
                 }
                 Console.WriteLine("\n*Press enter before you type next..*");
                 Console.ReadKey();
