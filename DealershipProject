@@ -13,10 +13,44 @@ namespace DealershipProject
         public string make;
         public string model;
         public int year;
+        public bool rentedStatus = false;
+        public bool serviceStatus = false;
         public Vehicle(string Make, string Model, int Year)
         {
             make = Make; model = Model; year = Year;
         }
+
+        public string IsAvailable()
+        {
+            string rented;
+            string service;
+            if (rentedStatus == true)
+            {
+                rented = "this car is unavailable for rent";
+            }
+            else
+            {
+                rented = "this car is available for rent";
+            }
+            if (serviceStatus == true)
+            {
+                service = "This car is in service";
+            }
+            else
+            {
+                service = "This car is not in service";
+            }
+            return rented + " " + service;
+        }
+        public void CarInfo()
+        {
+            Console.WriteLine("  ****************************");
+            Console.WriteLine("  * Displaying vehicle info **");
+            Console.WriteLine("  ****************************");
+            Console.WriteLine("\nCar: " + year + make + model);
+            Console.WriteLine("Status: " + IsAvailable());
+        }
+
     }
     class Employee
     {
@@ -26,6 +60,22 @@ namespace DealershipProject
         public Employee(string Fname, string Lname)
         {
             fname = Fname; lname = Lname;
+        }
+
+        public void ServiceCar(Vehicle x, Services y)
+        {
+            y.Repair(x.make, x.model, x.year);
+        }
+        public void ReturnCar(Vehicle x, Services y)
+        {
+            y.Complete(x.make, x.model, x.year);
+        }
+        public void EmployeeInfo()
+        {
+            Console.WriteLine("  ****************************");
+            Console.WriteLine("  * Displaying vehicle info **");
+            Console.WriteLine("  ****************************");
+            Console.WriteLine("\nName: " + fname + lname);
         }
     }
     class Client
