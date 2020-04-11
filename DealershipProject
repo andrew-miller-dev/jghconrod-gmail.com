@@ -1,12 +1,28 @@
 using System;
 using System.Collections.Generic;
 
+//Didn't finish what I was working on incase you find something half done, will finish later..
 namespace DealershipProject
 {
-    /* Car & Employee & Client & VehiclesPurchased & ComissionEarned Class':
-     * They are used to create instances of each respective object in the inventory class.
-     * Constructors are invoked within their respective methods in Inventory when adding/removing from their respective lists.
-     */
+    class ComissionEarned
+    {
+        public Employee employee;
+        public double comission;
+        public ComissionEarned(Employee Employee, double Comission)
+        {
+            employee = Employee; comission = Comission;
+        }
+    }
+    class VehicleService
+    {
+        public Vehicle vehicle;
+        public Client client;
+        public VehicleService(Vehicle Vehicle, Client Client)
+        {
+            vehicle = Vehicle; client = Client;
+        }
+    }
+
     class Vehicle
     {
         // Possible additions: default cost for each car, vin, status
@@ -19,63 +35,61 @@ namespace DealershipProject
         {
             make = Make; model = Model; year = Year;
         }
+        //public string IsAvailable()
+        //{
+        //    string rented;
+        //    string service;
 
-        public string IsAvailable()
-        {
-            string rented;
-            string service;
-            if (rentedStatus == true)
-            {
-                rented = "this car is unavailable for rent";
-            }
-            else
-            {
-                rented = "this car is available for rent";
-            }
-            if (serviceStatus == true)
-            {
-                service = "This car is in service";
-            }
-            else
-            {
-                service = "This car is not in service";
-            }
-            return rented + " " + service;
-        }
-        public void CarInfo()
-        {
-            Console.WriteLine("  ****************************");
-            Console.WriteLine("  * Displaying vehicle info **");
-            Console.WriteLine("  ****************************");
-            Console.WriteLine("\nCar: " + year + make + model);
-            Console.WriteLine("Status: " + IsAvailable());
-        }
+        //    if (rentedStatus == true)
+        //        rented = "This car is unavailable for rent";
+        //    else
+        //        rented = "This car is available for rent";
 
+        //    if (serviceStatus == true)
+        //        service = "this car is in service";
+        //    else
+        //        service = "this car is not in service";
+
+        //    return $"{rented}, {service}.";
+        //}
+        public void VehicleInfo(string make, string model, int year)
+        {
+            Console.WriteLine("  ***************************");
+            Console.WriteLine("  * Displaying vehicle info *");
+            Console.WriteLine("  ***************************");
+            Console.WriteLine($"\nCar: {make} {model} {year}");
+            //Console.WriteLine($"Status: {IsAvailable()}");
+        }
     }
     class Employee
     {
         // Possible additions: default id for each employee
         public string fname { get; set; }
         public string lname { get; set; }
+        public double comissionEarned = 0;
         public Employee(string Fname, string Lname)
         {
             fname = Fname; lname = Lname;
         }
 
-        public void ServiceCar(Vehicle x, Services y)
+        //public void ServiceCar(Vehicle v, Services s)
+        //{
+        //    s.Repair(v.make, v.model, v.year);
+        //}
+        //public void ReturnCar(Vehicle v, Services s)
+        //{
+        //    s.Complete(v.make, v.model, v.year);
+        //}
+
+        public void EmployeeInfo(string Lname)
         {
-            y.Repair(x.make, x.model, x.year);
-        }
-        public void ReturnCar(Vehicle x, Services y)
-        {
-            y.Complete(x.make, x.model, x.year);
-        }
-        public void EmployeeInfo()
-        {
-            Console.WriteLine("  ****************************");
-            Console.WriteLine("  * Displaying vehicle info **");
-            Console.WriteLine("  ****************************");
-            Console.WriteLine("\nName: " + fname + lname);
+            if(Lname == lname)
+            {
+                Console.WriteLine("  ****************************");
+                Console.WriteLine("  * Displaying employee info *");
+                Console.WriteLine("  ****************************");
+                Console.WriteLine($"Name: {fname} {lname} Comission Earned: {comissionEarned}");
+            }
         }
     }
     class Client
@@ -85,50 +99,49 @@ namespace DealershipProject
         public string lname;
         public string telephone;
         public string email;
-        public List<Vehicle> carsBought;
-        public List<Vehicle> carsRented;
+        public List<Vehicle> vehiclesBought;
+        public List<Vehicle> vehiclesRented;
 
-        public Client(string Fname, string Lname, string phoneNumber, string email)
+        public Client(string Fname, string Lname, string phoneNumber, string Email)
         {
             fname = Fname;
             lname = Lname;
             telephone = phoneNumber;
-            this.email = email;
-            this.carsBought = new List<Vehicle>();
-            this.carsRented = new List<Vehicle>();
+            email = Email;
+            vehiclesBought = new List<Vehicle>();
+            vehiclesRented = new List<Vehicle>();
 
         }
         public void Buy(Vehicle car)
         {
-            carsBought.Add(car);
-            Console.WriteLine($"Client {fname} {lname} bought the {car.year} {car.make} {car.model}.");
+            vehiclesBought.Add(car);
         }
 
         public void Rent(Vehicle car)
         {
-            carsRented.Add(car);
-            Console.WriteLine($"Client {fname} {lname} rented the {car.year} {car.make} {car.model}.");
+            vehiclesRented.Add(car);
         }
-        public void Return(Vehicle car)
+        public void ReturnRented(Vehicle car)
         {
-            for (var i = 0; i < carsRented.Count; i++)
+            for (var i = 0; i < vehiclesRented.Count; i++)
             {
-                if (carsRented[i].make == car.make && carsRented[i].model == car.model && carsRented[i].year == car.year)
+                if (vehiclesRented[i].make == car.make && vehiclesRented[i].model == car.model && vehiclesRented[i].year == car.year)
                 {
-                    carsRented.RemoveAt(i);
-                    Console.WriteLine($"Client {fname} {lname} successfully returned the {car.year} {car.make} {car.model}.");
+                    vehiclesRented.RemoveAt(i);
                 }
             }
         }
-        public void ClientInfo(Client client)
+        public void ClientInfo(string Lname)
         {
-            Console.WriteLine("  ****************************");
-            Console.WriteLine("  *  Displaying client info **");
-            Console.WriteLine("  ****************************");
-            Console.WriteLine("\nName: " + fname + " " + lname);
-            Console.WriteLine("Telephone: " + telephone);
-            Console.WriteLine("E-mail: " + email);
-
+            if(Lname == lname)
+            {
+                Console.WriteLine("  ***************************");
+                Console.WriteLine("  *  Displaying client info *");
+                Console.WriteLine("  ***************************");
+                Console.WriteLine("\nName: " + fname + " " + lname);
+                Console.WriteLine("Telephone: " + telephone);
+                Console.WriteLine("E-mail: " + email);
+            }
         }
     }
     class VehiclePurchase
@@ -145,32 +158,14 @@ namespace DealershipProject
             employee = Employee;
         }
     }
-    class ComissionEarned
-    {
-        public Employee employee;
-        public double comission;
-        public ComissionEarned(Employee Employee, double Comission)
-        {
-            employee = Employee; comission = Comission;
-        }
-    }
 
-    /* Inventory Class:
-     * This class tracks all inventory which can then be inherited in further classes to access and manipulate data.
-     * Methods in this class include AddEmployee, RemoveEmployee, AddClient, RemoveClient, AddCar, RemoveCar.
-     */
     class Inventory
     {
         // Each list item is an instance of an object of their respective classes
         protected static List<Vehicle> vehicles = new List<Vehicle>();
         protected static List<Client> clients = new List<Client>();
         protected static List<Employee> employees = new List<Employee>();
-        protected static List<VehiclePurchase> vehiclesPurchased = new List<VehiclePurchase>();
-        protected static List<ComissionEarned> comissionsEarned = new List<ComissionEarned>();
 
-        /* AddEmployee: Adds an employee object to the employees list.
-         * This method uses a bool to check if the information is a duplicate before adding to the list.
-         */
         public void AddEmployee(string fname, string lname)
         {
             var employee = new Employee(fname, lname);
@@ -193,9 +188,6 @@ namespace DealershipProject
                 Console.WriteLine("This is a duplicate employee and cannot be added..");
         }
 
-        /* RemoveEmployee: Removes an employee object to the employees list.
-         * This method checks if the information entered actually matches an object in the list before removing it.
-         */
         public void RemoveEmployee(string fname, string lname)
         {
             for (int i = 0; i < employees.Count; i++)
@@ -208,9 +200,6 @@ namespace DealershipProject
             }
         }
 
-        /* AddClient: Adds a client object to the clients list.
-         * This method uses a bool to check if the information is a duplicate before adding to the list.
-         */
         public void AddClient(string fname, string lname, string phone, string email)
         {
             var client = new Client(fname, lname, phone, email);
@@ -233,9 +222,6 @@ namespace DealershipProject
                 Console.WriteLine("This is a duplicate client and cannot be added..");
         }
 
-        /* RemoveClient: Removes a client object to the clients list.
-         * This method checks if the information entered actually matches an object in the list before removing it.
-         */
         public void RemoveClient(string fname, string lname)
         {
             for (int i = 0; i < clients.Count; i++)
@@ -248,10 +234,7 @@ namespace DealershipProject
             }
         }
 
-        /* AddCar: Adds a car object to the cars list.
-         * This method uses a bool to check if the information is a duplicate before adding to the list.
-         */
-        public void AddCar(string make, string model, int year)
+        public void AddVehicle(string make, string model, int year)
         {
             var vehicle = new Vehicle(make, model, year);
             bool duplicate = false;
@@ -267,39 +250,29 @@ namespace DealershipProject
             if (duplicate == false)
             {
                 vehicles.Add(vehicle);
-                Console.WriteLine($"{year} {make} {model} has been added successfully");
+                Console.WriteLine($"{year} {make} {model} has been added successfully to the inventory");
             }
             else
                 Console.WriteLine("This is a duplicate car and cannot be added..");
         }
 
-        /* RemoveCar: Removes a car object to the cars list.
-         * This method checks if the information entered actually matches an object in the list before removing it.
-         */
-        public void RemoveCar(string make, string model, int year)
+        public void RemoveVehicle(string make, string model, int year)
         {
             for (int i = 0; i < vehicles.Count; i++)
             {
                 if (vehicles[i].make == make & vehicles[i].model == model & vehicles[i].year == year)
                 {
                     vehicles.RemoveAt(i);
-                    Console.WriteLine($"{year} {make} {model} has been removed successfully!");
+                    Console.WriteLine($"{year} {make} {model} has been removed successfully from the inventory!");
                 }
             }
         }
     }
 
-    /* Dealership Class:
-     * This class inherites from the Inventory class to manipulate and display list data.
-     * Methods in this class include SellCar, ShowPurchased, ShowEmployee, ShowClient, ShowCar, ShowDealership.
-     */
     class Dealership : Inventory
     {
-        /* SellCar: Takes client/car information as parameters and sells the specified car to the specified client.
-         * This method removes the car input from the list cars, and adds the car/client information to a list called vehiclesPurchased.
-         * It checks with a bool if the car and client are present in the list before allowing them to be removed.
-         */
-
+        protected static List<VehiclePurchase> vehiclesPurchased = new List<VehiclePurchase>();
+        protected static List<ComissionEarned> comissionsEarned = new List<ComissionEarned>();
         // I suggest changing this SellCar function to accept only the last name of a client, it'd make it easier
         public void SellCar(string clname, string make, string model, int year, int cost, string efname, string elname)
         {
@@ -315,7 +288,6 @@ namespace DealershipProject
                 if (c.lname == clname)
                 {
                     clientPresent = true;
-
                 }
             }
             foreach (Vehicle v in vehicles)
@@ -330,28 +302,36 @@ namespace DealershipProject
             {
                 var vehiclePurchase = new VehiclePurchase(clname, vehicle, cost, employee);
                 vehiclesPurchased.Add(vehiclePurchase);
+                
+                foreach(Client c in clients)
+                {
+                    if(c.lname == clname)
+                    {
+                        c.Buy(vehicle);
+                    }
+                }
 
                 double comission = CalcComission(cost);
                 var comissionEarned = new ComissionEarned(employee, comission);
                 comissionsEarned.Add(comissionEarned);
 
+                employee.comissionEarned = comission;
+
                 Console.WriteLine($"Client {clname} has purchased a {year} {make} {model} for ${cost}.");
                 Console.WriteLine($"{efname} {elname} has made earned ${comission} in comission.");
 
-                RemoveCar(make, model, year);
+                RemoveVehicle(make, model, year);
             }
             else
                 Console.WriteLine("Invalid information, this cannot be sold. Please check all your information and try again..");
         }
 
-        // CalcComission: Basic function to calculate comission made and return that double
         public double CalcComission(double sale)
         {
             double comission = sale * 0.05;
             return comission;
         }
 
-        // ShowPurchased: Display the name of the client and vehicles they have purchashed through vehiclePurchased and the total made through purchases.
         public void ShowPurchased()
         {
             int totalMade = 0;
@@ -366,7 +346,6 @@ namespace DealershipProject
             Console.WriteLine($"Total ammount made through sales: ${totalMade}");
         }
 
-        // showComission: Display the name of the employee and comission earned through their sales.
         public void ShowComission()
         {
             Console.WriteLine($"Total comission made by employees:");
@@ -375,8 +354,13 @@ namespace DealershipProject
                 Console.WriteLine($"Name: {ce.employee.fname} {ce.employee.lname}, Comission Earned: ${ce.comission}");
             }
         }
-
-        // ShowEmployee: Display the of each employee object in the employees list inherited through inventory
+        public void ShowEmployee(string Lname)
+        {
+            foreach (Employee e in employees)
+            {
+                e.EmployeeInfo(Lname);
+            }
+        }
         public void ShowEmployee()
         {
             Console.WriteLine("Employees: ");
@@ -386,17 +370,32 @@ namespace DealershipProject
             }
         }
 
-        // ShowClient: Display the of each client object in the clients list inherited through inventory
+        public void ShowClient(string Lname)
+        {
+            foreach(Client c in clients)
+            {
+                c.ClientInfo(Lname);
+            }
+        }
         public void ShowClient()
         {
             Console.WriteLine("Clients: ");
             foreach (Client c in clients)
             {
-                Console.WriteLine($"{c.fname} {c.lname}");
+                Console.WriteLine($"{c.fname} {c.lname} {c.email} {c.telephone}");
+            }
+        }
+        public void ShowVehicle(string make, string model, int year)
+        {
+            foreach (Vehicle v in vehicles)
+            {
+                if(make == v.make & model == v.model && year == v.year)
+                {
+                    v.VehicleInfo(make, model, year);
+                }
             }
         }
 
-        // ShowCar: Display the of each car object in the cars list inherited through inventory
         public void ShowVehicle()
         {
             Console.WriteLine("Vehicles: ");
@@ -406,7 +405,6 @@ namespace DealershipProject
             }
         }
 
-        // ShowDealership: Display all dealership information inherited through inventory class.
         public void ShowDealership()
         {
             Console.WriteLine("Dealership Information");
@@ -425,35 +423,78 @@ namespace DealershipProject
     class Services : Inventory
     {
         protected static List<Vehicle> vehiclesInService = new List<Vehicle>();
+        protected static List<Vehicle> vehiclesRented = new List<Vehicle>();
 
         public void Repair(string make, string model, int year)
         {
             var vehicle = new Vehicle(make, model, year);
             vehiclesInService.Add(vehicle);
-            Console.WriteLine($"Vehicle {vehicle.make} {vehicle.model} {vehicle.year} has been added to the Vehicles in Service list.");
+            Console.WriteLine($"Vehicle {vehicle.make} {vehicle.model} {vehicle.year} has been added to the vehicles in service.");
         }
-
+ 
         public void Complete(string make, string model, int year) // Mark the service as finished
         {
-            for(var i = 0; i < vehiclesInService.Count; i++)
+            for (var i = 0; i < vehiclesInService.Count; i++)
             {
-                if(vehiclesInService[i].make == make && vehiclesInService[i].model == model && vehiclesInService[i].year == year)
+                if (vehiclesInService[i].make == make && vehiclesInService[i].model == model && vehiclesInService[i].year == year)
                 {
-                    vehiclesInService.RemoveAt(i);
-                    Console.WriteLine($"Vehicle {make} {model} {year} repair has been completed.");
+                    vehiclesInService.RemoveAt(i); 
+                    Console.WriteLine($"{year} {make} {model} repair has been completed.");
                 }
             }
         }
+        public void RentVehicle(string lname)
+        {
+            foreach (Client c in clients)
+            {
+                if (c.lname == lname)
+                {
+                    foreach (Vehicle v in vehicles)
+                    {
+                        var vehicle = new Vehicle(v.make, v.model, v.year);
+                        RemoveVehicle(v.make, v.model, v.year);
+                        Console.WriteLine($"\n{vehicle.year} {vehicle.make} {vehicle.model} has been rented to {c.fname} {c.lname}.\n");
+                        vehiclesRented.Add(vehicle);
+                        c.Rent(vehicle);
+                        
+                        break;
+                    }
+                }
+            }
+        }
+        public void ReturnVehicle(string lname)
+        {
+            foreach (Client c in clients)
+            {
+                if (c.lname == lname)
+                {
+                    foreach (Vehicle v in vehiclesRented)
+                    {
+                        for(int i = 0; i < vehiclesRented.Count; i++)
+                        {
+                            if (v == c.vehiclesRented[i])
+                            {
+                                var vehicle = new Vehicle(v.make, v.model, v.year);
+                                AddVehicle(v.make, v.model, v.year);
+                                Console.WriteLine($"\n{c.fname} {c.lname} has returned the {vehicle.year} {vehicle.make} {vehicle.model}.\n");
+                                vehiclesRented.Remove(vehicle);
+                                c.ReturnRented(vehiclesRented[i]);
 
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         public void DisplayAll()
         {
             Console.WriteLine("\nCurrent list of Vehicles in service:");
-            foreach(Vehicle v in vehiclesInService)
+            foreach (Vehicle v in vehiclesInService)
             {
                 Console.WriteLine($"{v.make} {v.model} {v.year}.");
             }
         }
-
     }
 
     class Program
@@ -495,26 +536,26 @@ namespace DealershipProject
 
             // Format: Make, Model, Year
             Console.WriteLine("Car Additions:");
-            inv.AddCar("Ford", "Taurus", 2012);
-            inv.AddCar("Ford", "Taurus", 2012);     // Comes up invalid as a duplicate *onpurpose*
-            inv.AddCar("Toyota", "Prius", 2015);
-            inv.AddCar("Buick", "Regal", 2009);
-            inv.AddCar("Honda", "Civic", 2009);
-            inv.AddCar("Nissan", "Sentra", 2007);
-            inv.AddCar("Toyota", "Camry", 2014);
-            inv.AddCar("Acura", "RDX", 2009);
-            inv.AddCar("Hyundai", "Sonata", 2019);
-            inv.AddCar("Jeep", "Wrangler", 2018);
-            inv.AddCar("Honda", "Civic", 2005);
-            inv.AddCar("Mercedes", "Benz", 2016);
-            inv.AddCar("Saturn", "Ion", 2006);
-            inv.AddCar("Ford", "F-350", 2005);
-            inv.AddCar("Subaru", "Forester", 2011);
-            inv.AddCar("Honda", "Fit", 2010);
-            inv.AddCar("Fiat", "Uno", 2013);
-            inv.AddCar("Hyundai", "Tucson", 2020);
-            inv.RemoveCar("Mercedes", "Benz", 2016);
-            inv.AddCar("Cadillac", "Deville", 1999);
+            inv.AddVehicle("Ford", "Taurus", 2012);
+            inv.AddVehicle("Ford", "Taurus", 2012);     // Comes up invalid as a duplicate *onpurpose*
+            inv.AddVehicle("Toyota", "Prius", 2015);
+            inv.AddVehicle("Buick", "Regal", 2009);
+            inv.AddVehicle("Honda", "Civic", 2009);
+            inv.AddVehicle("Nissan", "Sentra", 2007);
+            inv.AddVehicle("Toyota", "Camry", 2014);
+            inv.AddVehicle("Acura", "RDX", 2009);
+            inv.AddVehicle("Hyundai", "Sonata", 2019);
+            inv.AddVehicle("Jeep", "Wrangler", 2018);
+            inv.AddVehicle("Honda", "Civic", 2005);
+            inv.AddVehicle("Mercedes", "Benz", 2016);
+            inv.AddVehicle("Saturn", "Ion", 2006);
+            inv.AddVehicle("Ford", "F-350", 2005);
+            inv.AddVehicle("Subaru", "Forester", 2011);
+            inv.AddVehicle("Honda", "Fit", 2010);
+            inv.AddVehicle("Fiat", "Uno", 2013);
+            inv.AddVehicle("Hyundai", "Tucson", 2020);
+            inv.RemoveVehicle("Mercedes", "Benz", 2016);
+            inv.AddVehicle("Cadillac", "Deville", 1999);
 
             // Format: Client Lastname, Make, Model, Year, Cost, Employee Firsname, Employee lastname
             dealer.SellCar("Lee", "Buick", "Regal", 2009, 3400, "Mona", "Limbar");
@@ -530,8 +571,10 @@ namespace DealershipProject
             dealer.SellCar("Darlin", "Buick", "Regal", 2009, 3400, "Mark", "Wong"); // Comes up invalid because information does not exist *onpurpose*
 
             // Services 
-            serv.Repair("Fiat", "Uno", 2013);
-            serv.Repair("Hyundai", "Tucson", 2020);
+            serv.Repair("Hyundai", "Sonata", 2019);
+            //serv.RentVehicle("Britton");
+            serv.Repair("Honda", "Civic", 2005);
+            //serv.RentVehicle("Graham");
 
             do
             {
@@ -552,9 +595,9 @@ namespace DealershipProject
                 {
                     Console.WriteLine("Show Commands:");
                     Console.WriteLine("'show all' displays all dealership information");
-                    Console.WriteLine("'show vehicles' displays all cars available");
-                    Console.WriteLine("'show clients' displays all clients");
-                    Console.WriteLine("'show employees' displays all employees");
+                    Console.WriteLine("'show vehicles' to see vehicles");
+                    Console.WriteLine("'show clients' to see clients");
+                    Console.WriteLine("'show employees' to see employees");
                     Console.WriteLine("'show purchased' displays all vehicles sold all the dealership");
                     Console.WriteLine("'show comissions' displays each employee and comissions they've earned");
                     Console.WriteLine("\nAdd Commands:");
@@ -568,9 +611,9 @@ namespace DealershipProject
                     Console.WriteLine("\nSale Command:");
                     Console.WriteLine("'sell vehicle' to sell a vehicle to a customer");
                     Console.WriteLine("\nServices Commands:");
-                    Console.WriteLine("'service vehicle' to repair a vehicle");
-                    Console.WriteLine("'repair vehicle' to complete the service of a vehicle");
-                    Console.WriteLine("'display services' to display the current list of services awating service");
+                    Console.WriteLine("'service start' to begin the servicing of a vehicle");
+                    Console.WriteLine("'service complete' to complete the servicing of a vehicle");
+                    Console.WriteLine("'show services' to display the current list of services awating service");
                     Console.WriteLine("\nType exit and then enter to leave at any time...");
                 }
                 if (input == "show all")
@@ -579,15 +622,68 @@ namespace DealershipProject
                 }
                 if (input == "show vehicles")
                 {
-                    dealer.ShowVehicle();
+                    Console.WriteLine("'show all' to see a list of vehicles at this dealership");
+                    Console.WriteLine("'show vehicle to see all available information on a specific vehicle\n");
+
+                    input = Console.ReadLine();
+
+                    if (input == "show all")
+                    {
+                        dealer.ShowVehicle();
+                    }
+                    if (input == "show vehicle")
+                    {
+                        Console.WriteLine("Please enter the vehicles make");
+                        string make = Console.ReadLine();
+                        Console.WriteLine("Please enter the the vehicles model");
+                        string model = Console.ReadLine();
+                        Console.WriteLine("Please enter the the vehicles year");
+                        string yearSTR = Console.ReadLine();
+                        int year = Convert.ToInt32(yearSTR);
+                        Console.WriteLine();
+
+                        dealer.ShowVehicle(make, model, year);
+                    }
                 }
                 if (input == "show clients")
                 {
-                    dealer.ShowClient();
+                    Console.WriteLine("'show all' to see a list of clients at this dealership");
+                    Console.WriteLine("'show client' to look up a specific client\n");
+
+                    input = Console.ReadLine();
+
+                    if (input == "show all")
+                    {
+                        dealer.ShowClient();
+                    }
+                    if (input == "show client")
+                    {
+                        Console.WriteLine("Please enter the clients last name");
+                        string lname = Console.ReadLine();
+                        Console.WriteLine();
+
+                        dealer.ShowClient(lname);
+                    }
                 }
                 if (input == "show employees")
                 {
-                    dealer.ShowEmployee();
+                    Console.WriteLine("'show all' to see a list of employees at this dealership");
+                    Console.WriteLine("'show employee' to look up a specific employee\n");
+
+                    input = Console.ReadLine();
+
+                    if (input == "show all")
+                    {
+                        dealer.ShowEmployee();
+                    }
+                    if (input == "show employee")
+                    {
+                        Console.WriteLine("Please enter the employees last name");
+                        string lname = Console.ReadLine();
+                        Console.WriteLine();
+
+                        dealer.ShowEmployee(lname);
+                    }
                 }
                 if (input == "show comissions")
                 {
@@ -647,7 +743,7 @@ namespace DealershipProject
                     string yearSTR = Console.ReadLine();
                     int year = Convert.ToInt32(yearSTR);
 
-                    dealer.AddCar(make, model, year);
+                    dealer.AddVehicle(make, model, year);
                 }
                 if (input == "delete vehicle")
                 {
@@ -659,7 +755,7 @@ namespace DealershipProject
                     string yearSTR = Console.ReadLine();
                     int year = Convert.ToInt32(yearSTR);
 
-                    dealer.RemoveCar(make, model, year);
+                    dealer.RemoveVehicle(make, model, year);
                 }
                 if (input == "sell vehicle")
                 {
@@ -671,15 +767,8 @@ namespace DealershipProject
                     string elname = Console.ReadLine();
 
                     Console.WriteLine("We also need the client's information:");
-                    //Console.WriteLine("Enter the client first name:");
-                    //string cfname = Console.ReadLine();
                     Console.WriteLine("Enter the client last name:");
                     string clname = Console.ReadLine();
-                    //Console.WriteLine("Please enter your client telephone number:");
-                    //string phone = Console.ReadLine();
-                    //Console.WriteLine("Please enter your client E-mail:");
-                    //string email = Console.ReadLine();
-
 
                     Console.WriteLine("We need the vehicles information:");
                     Console.WriteLine("Enter the vehicles make:");
@@ -696,29 +785,50 @@ namespace DealershipProject
 
                     dealer.SellCar(clname, make, model, year, cost, efname, elname);
                 }
-                if (input == "service vehicle")
+                if (input == "service start")
                 {
-                    Console.WriteLine("Insert the Vehicle make:");
+                    Console.WriteLine("Enter the vehicle make:");
                     string make = Console.ReadLine();
-                    Console.WriteLine("Vehicle model:");
+                    Console.WriteLine("Enter the vehicle model:");
                     string model = Console.ReadLine();
-                    Console.WriteLine("Vehicle year:");
+                    Console.WriteLine("Enter the vehicle year:");
                     string yearSTR = Console.ReadLine();
                     int year = Convert.ToInt32(yearSTR);
-                    serv.Repair(make, model, year);
+
+                    Console.WriteLine("Enter the clients last name:");
+                    string lname = Console.ReadLine();
+
+                    Console.WriteLine("Do you need a car rental? yes or no");
+                    input = Console.ReadLine();
+
+                    if(input == "yes")
+                    {
+                        serv.RentVehicle(lname);
+                        serv.Repair(make, model, year);
+                    }
+                    else if (input == "no")
+                    {
+                        serv.Repair(make, model, year);
+                    }
                 }
-                if (input == "repair vehicle")
+                if (input == "service complete")
                 {
-                    Console.WriteLine("Insert the Vehicle make:");
+                    Console.WriteLine("Enter the Vehicle make:");
                     string make = Console.ReadLine();
-                    Console.WriteLine("Vehicle model:");
+                    Console.WriteLine("Enter the model:");
                     string model = Console.ReadLine();
-                    Console.WriteLine("Vehicle year:");
+                    Console.WriteLine("Enter the year:");
                     string yearSTR = Console.ReadLine();
                     int year = Convert.ToInt32(yearSTR);
+
+                    Console.WriteLine("Enter the clients last name");
+                    string lname = Console.ReadLine();
+
+                    serv.ReturnVehicle(lname);
                     serv.Complete(make, model, year);
+
                 }
-                if (input == "display services")
+                if (input == "show services")
                 {
                     serv.DisplayAll();
                 }
