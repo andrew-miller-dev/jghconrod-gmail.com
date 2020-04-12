@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 
-//Didn't finish what I was working on incase you find something half done, will finish later..
 namespace DealershipProject
 {
     class ComissionEarned
@@ -25,7 +24,6 @@ namespace DealershipProject
 
     class Vehicle
     {
-        // Possible additions: default cost for each car, vin, status
         public string make;
         public string model;
         public int year;
@@ -35,51 +33,56 @@ namespace DealershipProject
         {
             make = Make; model = Model; year = Year;
         }
-        //public string IsAvailable()
-        //{
-        //    string rented;
-        //    string service;
+        public string IsAvailable()
+        {
+            string rented;
+            string service;
 
-        //    if (rentedStatus == true)
-        //        rented = "This car is unavailable for rent";
-        //    else
-        //        rented = "This car is available for rent";
+            if (rentedStatus == true)
+                rented = "This car is unavailable for rent";
+            else
+                rented = "This car is available for rent";
 
-        //    if (serviceStatus == true)
-        //        service = "this car is in service";
-        //    else
-        //        service = "this car is not in service";
+            if (serviceStatus == true)
+                service = "this car is in service";
+            else
+                service = "this car is not in service";
 
-        //    return $"{rented}, {service}.";
-        //}
+            return $"{rented}, {service}.";
+        }
         public void VehicleInfo(string make, string model, int year)
         {
             Console.WriteLine("  ***************************");
             Console.WriteLine("  * Displaying vehicle info *");
             Console.WriteLine("  ***************************");
             Console.WriteLine($"\nCar: {make} {model} {year}");
-            //Console.WriteLine($"Status: {IsAvailable()}");
+            Console.WriteLine($"Status: {IsAvailable()}");
         }
     }
     class Employee
     {
-        // Possible additions: default id for each employee
-        public string fname { get; set; }
-        public string lname { get; set; }
+        public string fname;
+        public string lname;
+        public string sin = "n/a";
+        public string email = "n/a";
         public double comissionEarned = 0;
         public Employee(string Fname, string Lname)
         {
             fname = Fname; lname = Lname;
         }
+        public Employee(string Fname, string Lname, string Sin, string Email)
+        {
+            fname = Fname; lname = Lname; sin = Sin; email = Email;
+        }
 
-        //public void ServiceCar(Vehicle v, Services s)
-        //{
-        //    s.Repair(v.make, v.model, v.year);
-        //}
-        //public void ReturnCar(Vehicle v, Services s)
-        //{
-        //    s.Complete(v.make, v.model, v.year);
-        //}
+        public void ServiceCar(Vehicle v, Services s)
+        {
+            s.Repair(v.make, v.model, v.year);
+        }
+        public void ReturnCar(Vehicle v, Services s)
+        {
+            s.Complete(v.make, v.model, v.year);
+        }
 
         public void EmployeeInfo(string Lname)
         {
@@ -88,13 +91,14 @@ namespace DealershipProject
                 Console.WriteLine("  ****************************");
                 Console.WriteLine("  * Displaying employee info *");
                 Console.WriteLine("  ****************************");
-                Console.WriteLine($"Name: {fname} {lname} Comission Earned: {comissionEarned}");
+                Console.WriteLine($"Name: {fname} {lname}");
+                Console.WriteLine($"Sin: {sin}");
+                Console.WriteLine($"E-mail: {email}");
             }
         }
     }
     class Client
     {
-        // Possible additions: default id for each client
         public string fname;
         public string lname;
         public string telephone;
@@ -187,6 +191,27 @@ namespace DealershipProject
             else
                 Console.WriteLine("This is a duplicate employee and cannot be added..");
         }
+        public void AddEmployee(string fname, string lname, string sin, string email)
+        {
+            var employee = new Employee(fname, lname, sin, email);
+            bool duplicate = false;
+
+            foreach (Employee e in employees)
+            {
+                if (e.fname == fname & e.lname == lname)
+                {
+                    duplicate = true;
+                }
+            }
+
+            if (duplicate == false)
+            {
+                employees.Add(employee);
+                Console.WriteLine($"{fname} {lname} {sin} {email} has been added successfully!");
+            }
+            else
+                Console.WriteLine("This is a duplicate employee and cannot be added..");
+        }
 
         public void RemoveEmployee(string fname, string lname)
         {
@@ -273,10 +298,8 @@ namespace DealershipProject
     {
         protected static List<VehiclePurchase> vehiclesPurchased = new List<VehiclePurchase>();
         protected static List<ComissionEarned> comissionsEarned = new List<ComissionEarned>();
-        // I suggest changing this SellCar function to accept only the last name of a client, it'd make it easier
         public void SellCar(string clname, string make, string model, int year, int cost, string efname, string elname)
         {
-            //var client = new Client(cfname, clname, phone, email);
             var vehicle = new Vehicle(make, model, year);
             var employee = new Employee(efname, elname);
 
@@ -366,7 +389,10 @@ namespace DealershipProject
             Console.WriteLine("Employees: ");
             foreach (Employee e in employees)
             {
-                Console.WriteLine($"{e.fname} {e.lname}");
+                if(e.email == "n/a" || e.sin == "n/a")
+                    Console.WriteLine($"{e.fname} {e.lname}");
+                else
+                    Console.WriteLine($"{e.fname} {e.lname} {e.sin} {e.email}");
             }
         }
 
@@ -509,13 +535,13 @@ namespace DealershipProject
             // This is some basic data so you don't have to add everytime
             // Format: Firstname, Lastname 
             Console.WriteLine("Employee Additions:");
-            inv.AddEmployee("Mark", "Wong");
-            inv.AddEmployee("Jeff", "Halbert");
-            inv.AddEmployee("John", "Jones");
-            inv.AddEmployee("Mona", "Limbar");
-            inv.AddEmployee("Rabia", "Forn");
-            inv.AddEmployee("Ryan", "Graves");
-            inv.AddEmployee("Mona", "Limbar");      // Comes up invalid as a duplicate *onpurpose*
+            inv.AddEmployee("Mark", "Wong", "084 999 671", "m.wong@dealership.ca");
+            inv.AddEmployee("Jeff", "Halbert", "003 212 867", "j.halbert@dealership.ca");
+            inv.AddEmployee("John", "Jones", "171 762 206", "j.jones@dealership.ca");
+            inv.AddEmployee("Mona", "Limbar", "645 405 655", "m.limbar@dealership.ca");
+            inv.AddEmployee("Rabia", "Forn", "319 384 731", "r.forn@dealership.ca");
+            inv.AddEmployee("Ryan", "Graves", "664 335 585", "r.graves@dealership.ca");
+            inv.AddEmployee("Mona", "Limbar", "550 407 142", "m.limbar@dealership.ca");      // Comes up invalid as a duplicate *onpurpose*
             inv.RemoveEmployee("John", "Jones");
             Console.WriteLine();
 
@@ -722,7 +748,24 @@ namespace DealershipProject
                     Console.WriteLine("Please enter your employees last name:");
                     string lname = Console.ReadLine();
 
-                    dealer.AddEmployee(fname, lname);
+                    Console.WriteLine("Would you like to add a SIN and Email? yes/no");
+                    input = Console.ReadLine();
+                    if(input == "no")
+                    {
+                        dealer.AddEmployee(fname, lname);
+                    }
+                    if(input == "yes")
+                    {
+                        Console.WriteLine("Enter the employees SIN:");
+                        string sin = Console.ReadLine();
+                        
+                        Console.WriteLine("Enter the employees E-Mail:");
+                        string email = Console.ReadLine();
+
+                        dealer.AddEmployee(fname, lname, sin, email);
+                    }
+
+                    
                 }
                 if (input == "delete employee")
                 {
