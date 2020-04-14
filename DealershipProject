@@ -348,9 +348,9 @@ namespace DealershipProject
                         {
                             c.Buy(vehicle);
                         }
-                        catch
+                        catch (NotSupportedException e)
                         {
-                            Console.WriteLine("We have caught an exception.. an error has occured.");
+                            Console.WriteLine("We have caught an exception.. an error has occured: " + e);
                         }
                         
                     }
