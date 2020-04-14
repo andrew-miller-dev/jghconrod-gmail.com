@@ -344,7 +344,15 @@ namespace DealershipProject
                 {
                     if (c.lname == clname)
                     {
-                        c.Buy(vehicle);
+                        try
+                        {
+                            c.Buy(vehicle);
+                        }
+                        catch
+                        {
+                            Console.WriteLine("We have caught an exception.. an error has occured.");
+                        }
+                        
                     }
                 }
 
