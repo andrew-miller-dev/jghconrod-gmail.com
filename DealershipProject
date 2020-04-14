@@ -291,7 +291,7 @@ namespace DealershipProject
                 Console.WriteLine($"{year} {make} {model} has been added successfully to the inventory");
             }
             else
-                Console.WriteLine("This is a duplicate car and cannot be added..");
+                Console.WriteLine("This is a duplicate vehicle and cannot be added..");
         }
 
         public void RemoveVehicle(string make, string model, int year)
@@ -316,59 +316,29 @@ namespace DealershipProject
             var vehicle = new Vehicle(make, model, year);
             var employee = new Employee(efname, elname);
 
-            bool carPresent = false;
-            bool clientPresent = false;
-
             // Check if a client/vehicle as input exists before allowing you to sell it
+
+            var vehiclePurchase = new VehiclePurchase(clname, vehicle, cost, employee);
+            vehiclesPurchased.Add(vehiclePurchase);
+
             foreach (Client c in clients)
             {
                 if (c.lname == clname)
                 {
-                    clientPresent = true;
-                }
-            }
-            foreach (Vehicle v in vehicles)
-            {
-                if (v.make == make & v.model == model & v.year == year)
-                {
-                    carPresent = true;
+                    c.Buy(vehicle);
                 }
             }
 
-            if (clientPresent == true & carPresent == true)
-            {
-                var vehiclePurchase = new VehiclePurchase(clname, vehicle, cost, employee);
-                vehiclesPurchased.Add(vehiclePurchase);
+            double comission = CalcComission(cost, 0.05);
+            var comissionEarned = new ComissionEarned(employee, comission);
+            comissionsEarned.Add(comissionEarned);
 
-                foreach (Client c in clients)
-                {
-                    if (c.lname == clname)
-                    {
-                        try
-                        {
-                            c.Buy(vehicle);
-                        }
-                        catch (NotSupportedException e)
-                        {
-                            Console.WriteLine("We have caught an exception.. an error has occured: " + e);
-                        }
-                        
-                    }
-                }
+            employee.comissionEarned = comission;
 
-                double comission = CalcComission(cost, 0.05);
-                var comissionEarned = new ComissionEarned(employee, comission);
-                comissionsEarned.Add(comissionEarned);
+            Console.WriteLine($"Client {clname} has purchased a {year} {make} {model} for ${cost}.");
+            Console.WriteLine($"{efname} {elname} has made earned ${comission} in comission.");
 
-                employee.comissionEarned = comission;
-
-                Console.WriteLine($"Client {clname} has purchased a {year} {make} {model} for ${cost}.");
-                Console.WriteLine($"{efname} {elname} has made earned ${comission} in comission.");
-
-                RemoveVehicle(make, model, year);
-            }
-            else
-                Console.WriteLine("Invalid information, this cannot be sold. Please check all your information and try again..");
+            RemoveVehicle(make, model, year);
         }
         // CalcComission method used to allow for code reusability when selling vehicles
         public double CalcComission(double sale, double rate)
@@ -688,10 +658,18 @@ namespace DealershipProject
                         string model = Console.ReadLine();
                         Console.WriteLine("Please enter the the vehicles year");
                         string yearSTR = Console.ReadLine();
-                        int year = Convert.ToInt32(yearSTR);
-                        Console.WriteLine();
 
-                        dealer.ShowVehicle(make, model, year);
+                        try
+                        {
+                            int year = Convert.ToInt32(yearSTR);
+                            Console.WriteLine();
+                            dealer.ShowVehicle(make, model, year);
+                        }
+                        catch (System.FormatException)
+                        {
+                            Console.WriteLine("The year must be input as numbers..");
+                        }
+
                     }
                 }
                 if (input == "show clients")
@@ -787,8 +765,6 @@ namespace DealershipProject
 
                         dealer.AddEmployee(fname, lname, sin, email);
                     }
-
-
                 }
                 if (input == "delete employee")
                 {
@@ -807,9 +783,16 @@ namespace DealershipProject
                     string model = Console.ReadLine();
                     Console.WriteLine("Please enter the vehicles year:");
                     string yearSTR = Console.ReadLine();
-                    int year = Convert.ToInt32(yearSTR);
 
-                    dealer.AddVehicle(make, model, year);
+                    try
+                    {
+                        int year = Convert.ToInt32(yearSTR);
+                        dealer.AddVehicle(make, model, year);
+                    }
+                    catch (System.FormatException)
+                    {
+                        Console.WriteLine("The year must be input as numbers");
+                    }
                 }
                 if (input == "delete vehicle")
                 {
@@ -819,9 +802,16 @@ namespace DealershipProject
                     string model = Console.ReadLine();
                     Console.WriteLine("Please enter the vehicles year:");
                     string yearSTR = Console.ReadLine();
-                    int year = Convert.ToInt32(yearSTR);
 
-                    dealer.RemoveVehicle(make, model, year);
+                    try
+                    {
+                        int year = Convert.ToInt32(yearSTR);
+                        dealer.RemoveVehicle(make, model, year);
+                    }
+                    catch (System.FormatException)
+                    {
+                        Console.WriteLine("The year must be input as numbers");
+                    }
                 }
                 if (input == "sell vehicle")
                 {
@@ -841,15 +831,30 @@ namespace DealershipProject
                     string make = Console.ReadLine();
                     Console.WriteLine("Enter the vehicles model:");
                     string model = Console.ReadLine();
-                    Console.WriteLine("Enter the vehicles year:");
-                    string yearSTR = Console.ReadLine();
-                    int year = Convert.ToInt32(yearSTR);
 
-                    Console.WriteLine("Enter the cost of the vehicle:");
-                    string costSTR = Console.ReadLine();
-                    int cost = Convert.ToInt32(costSTR);
+                    try
+                    {
+                        Console.WriteLine("Enter the vehicles year:");
+                        string yearSTR = Console.ReadLine();
+                        int year = Convert.ToInt32(yearSTR);
+                        
+                        try
+                        {
+                            Console.WriteLine("Enter the cost of the vehicle:");
+                            string costSTR = Console.ReadLine();
+                            int cost = Convert.ToInt32(costSTR);
+                            dealer.SellVehicle(clname, make, model, year, cost, efname, elname);
+                        }
+                        catch (System.FormatException)
+                        {
+                            Console.WriteLine("The cost must be input as numbers");
+                        }
+                    }
+                    catch (System.FormatException)
+                    {
+                        Console.WriteLine("The year must be input as numbers");
+                    }
 
-                    dealer.SellVehicle(clname, make, model, year, cost, efname, elname);
                 }
                 if (input == "service start")
                 {
@@ -859,23 +864,32 @@ namespace DealershipProject
                     string model = Console.ReadLine();
                     Console.WriteLine("Enter the vehicle year:");
                     string yearSTR = Console.ReadLine();
-                    int year = Convert.ToInt32(yearSTR);
 
-                    Console.WriteLine("Enter the clients last name:");
-                    string lname = Console.ReadLine();
-
-                    Console.WriteLine("Do you need a car rental? yes or no");
-                    input = Console.ReadLine();
-
-                    if (input == "yes")
+                    try
                     {
-                        serv.RentVehicle(lname);
-                        serv.Repair(make, model, year);
+                        int year = Convert.ToInt32(yearSTR);
+
+                        Console.WriteLine("Enter the clients last name:");
+                        string lname = Console.ReadLine();
+
+                        Console.WriteLine("Do you need a car rental? yes or no");
+                        input = Console.ReadLine();
+
+                        if (input == "yes")
+                        {
+                            serv.RentVehicle(lname);
+                            serv.Repair(make, model, year);
+                        }
+                        else if (input == "no")
+                        {
+                            serv.Repair(make, model, year);
+                        }
                     }
-                    else if (input == "no")
+                    catch (System.FormatException)
                     {
-                        serv.Repair(make, model, year);
+                        Console.WriteLine("The year must be input as numbers");
                     }
+
                 }
                 if (input == "service complete")
                 {
@@ -885,13 +899,22 @@ namespace DealershipProject
                     string model = Console.ReadLine();
                     Console.WriteLine("Enter the year:");
                     string yearSTR = Console.ReadLine();
-                    int year = Convert.ToInt32(yearSTR);
 
-                    Console.WriteLine("Enter the clients last name");
-                    string lname = Console.ReadLine();
+                    try
+                    {
+                        int year = Convert.ToInt32(yearSTR);
 
-                    serv.ReturnVehicle(lname);
-                    serv.Complete(make, model, year);
+                        Console.WriteLine("Enter the clients last name");
+                        string lname = Console.ReadLine();
+
+                        serv.ReturnVehicle(lname);
+                        serv.Complete(make, model, year);
+                    }
+                    catch (System.FormatException)
+                    {
+                        Console.WriteLine("The year must be input as numbers");
+                    }
+
 
                 }
                 if (input == "show services")
