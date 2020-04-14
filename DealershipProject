@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace DealershipProject
 {
+    // Useds to track comissions earned by employees. We store instances of this class into a list in the dealership class
     class ComissionEarned
     {
         public Employee employee;
@@ -12,6 +13,7 @@ namespace DealershipProject
             employee = Employee; comission = Comission;
         }
     }
+    // Used to track vehicles in service in the service class by storing lists of instances of this class in the dealership class
     class VehicleService
     {
         public Vehicle vehicle;
@@ -21,7 +23,22 @@ namespace DealershipProject
             vehicle = Vehicle; client = Client;
         }
     }
-
+    // Used to track vehicles purchased in a seperate list in the dealership class
+    class VehiclePurchase
+    {
+        public string lastName;
+        public Vehicle vehicle;
+        public int cost;
+        public Employee employee;
+        public VehiclePurchase(String lName, Vehicle Vehicle, int Cost, Employee Employee)
+        {
+            lastName = lName;
+            vehicle = Vehicle;
+            cost = Cost;
+            employee = Employee;
+        }
+    }
+    // Vehicle class is the base of how we store vehicles, includes a method that checks if the car has been rented/in service
     class Vehicle
     {
         public string make;
@@ -50,6 +67,7 @@ namespace DealershipProject
 
             return $"{rented}, {service}.";
         }
+        // VehicleInfo method used to let the user search specific cars and see their information in the main menu 
         public void VehicleInfo(string make, string model, int year)
         {
             Console.WriteLine("  ***************************");
@@ -59,6 +77,8 @@ namespace DealershipProject
             Console.WriteLine($"Status: {IsAvailable()}");
         }
     }
+    // Employee class is the base of how we store employees, this includes two employee constructors to allow the user to decide if they want to
+    // add an employee with or without an email/sin
     class Employee
     {
         public string fname;
@@ -83,7 +103,7 @@ namespace DealershipProject
         {
             s.Complete(v.make, v.model, v.year);
         }
-
+        // EmployeeInfo method used to let the user search specific employees and see their information in the main menu 
         public void EmployeeInfo(string Lname)
         {
             if (Lname == lname)
@@ -153,28 +173,16 @@ namespace DealershipProject
             }
         }
     }
-    class VehiclePurchase
-    {
-        public string lastName;
-        public Vehicle vehicle;
-        public int cost;
-        public Employee employee;
-        public VehiclePurchase(String lName, Vehicle Vehicle, int Cost, Employee Employee)
-        {
-            lastName = lName;
-            vehicle = Vehicle;
-            cost = Cost;
-            employee = Employee;
-        }
-    }
-
+    // Inventory class has all the methods needed to add and remove employees, vehicles and clients to/from the list that is later 
+    // inherited to the dealership and server classes.
     class Inventory
     {
         // Each list item is an instance of an object of their respective classes
         protected static List<Vehicle> vehicles = new List<Vehicle>();
         protected static List<Client> clients = new List<Client>();
         protected static List<Employee> employees = new List<Employee>();
-
+        
+        // There are two seperate AddEmployee methods which will be called depending on if the user wants to add a sin/email or not to employee info
         public void AddEmployee(string fname, string lname)
         {
             var employee = new Employee(fname, lname);
@@ -298,12 +306,12 @@ namespace DealershipProject
             }
         }
     }
-
+    // Dealership class has many methods including SellVehicle, CalcComission and all the other show methods to allow the user to see the dealership info
     class Dealership : Inventory
     {
         protected static List<VehiclePurchase> vehiclesPurchased = new List<VehiclePurchase>();
         protected static List<ComissionEarned> comissionsEarned = new List<ComissionEarned>();
-        public void SellCar(string clname, string make, string model, int year, int cost, string efname, string elname)
+        public void SellVehicle(string clname, string make, string model, int year, int cost, string efname, string elname)
         {
             var vehicle = new Vehicle(make, model, year);
             var employee = new Employee(efname, elname);
@@ -311,6 +319,7 @@ namespace DealershipProject
             bool carPresent = false;
             bool clientPresent = false;
 
+            // Check if a client/vehicle as input exists before allowing you to sell it
             foreach (Client c in clients)
             {
                 if (c.lname == clname)
@@ -339,7 +348,7 @@ namespace DealershipProject
                     }
                 }
 
-                double comission = CalcComission(cost);
+                double comission = CalcComission(cost, 0.05);
                 var comissionEarned = new ComissionEarned(employee, comission);
                 comissionsEarned.Add(comissionEarned);
 
@@ -353,13 +362,12 @@ namespace DealershipProject
             else
                 Console.WriteLine("Invalid information, this cannot be sold. Please check all your information and try again..");
         }
-
-        public double CalcComission(double sale)
+        // CalcComission method used to allow for code reusability when selling vehicles
+        public double CalcComission(double sale, double rate)
         {
-            double comission = sale * 0.05;
+            double comission = sale * rate;
             return comission;
         }
-
         public void ShowPurchased()
         {
             int totalMade = 0;
@@ -373,7 +381,6 @@ namespace DealershipProject
             }
             Console.WriteLine($"Total ammount made through sales: ${totalMade}");
         }
-
         public void ShowComission()
         {
             Console.WriteLine($"Total comission made by employees:");
@@ -426,7 +433,6 @@ namespace DealershipProject
                 }
             }
         }
-
         public void ShowVehicle()
         {
             Console.WriteLine("Vehicles: ");
@@ -435,7 +441,6 @@ namespace DealershipProject
                 Console.WriteLine($"{v.year} {v.make} {v.model}");
             }
         }
-
         public void ShowDealership()
         {
             Console.WriteLine("Dealership Information");
@@ -450,7 +455,7 @@ namespace DealershipProject
             ShowComission();
         }
     }
-    // Create the services class
+    // Service class includes methods Repair, Complete, RentVehicle and ReturnVehicle
     class Services : Inventory
     {
         protected static List<Vehicle> vehiclesInService = new List<Vehicle>();
@@ -474,7 +479,7 @@ namespace DealershipProject
                 }
             }
         }
-        // Rent a vehicle method
+        // Rent a vehicle method, just allowing the system to automatically rent out the first available vehicle
         public void RentVehicle(string lname)
         {
             foreach (Client c in clients)
@@ -494,7 +499,8 @@ namespace DealershipProject
                 }
             }
         }
-        // Return a vehicle method
+        // Return a vehicle method, first ensure that you are returning the right vehicle on the vehiclesRented list that matchs the client that
+        // rented it and the make/model/year of vehicle rented.
         public void ReturnVehicle(string lname)
         {
             foreach (Client c in clients)
@@ -592,17 +598,17 @@ namespace DealershipProject
             inv.AddVehicle("Cadillac", "Deville", 1999);
 
             // Format: Client Lastname, Make, Model, Year, Cost, Employee Firsname, Employee lastname
-            dealer.SellCar("Lee", "Buick", "Regal", 2009, 3400, "Mona", "Limbar");
-            dealer.SellCar("Charlie", "Cadillac", "Deville", 1999, 900, "Mark", "Wong");
-            dealer.SellCar("Britton", "Toyota", "Prius", 2015, 7000, "Rabia", "Forn");
-            dealer.SellCar("Graham", "Acura", "RDX", 2009, 2200, "Mona", "Limbar");   // Need to handle duplicates for comission sales
-            dealer.SellCar("Galloway", "Jeep", "Wrangler", 2018, 12000, "Ryan", "Graves");
-            dealer.SellCar("Charlie", "Honda", "Civic", 2005, 1900, "Jeff", "Halbert");
-            dealer.SellCar("Wood", "Nissan", "Sentra", 2007, 1600, "Mark", "Wong");
-            dealer.SellCar("Galloway", "Honda", "Civic", 2009, 2500, "Rabia", "Forn");
-            dealer.SellCar("Cairns", "Hyundai", "Sonata", 2019, 14500, "John", "Jones");
+            dealer.SellVehicle("Lee", "Buick", "Regal", 2009, 3400, "Mona", "Limbar");
+            dealer.SellVehicle("Charlie", "Cadillac", "Deville", 1999, 900, "Mark", "Wong");
+            dealer.SellVehicle("Britton", "Toyota", "Prius", 2015, 7000, "Rabia", "Forn");
+            dealer.SellVehicle("Graham", "Acura", "RDX", 2009, 2200, "Mona", "Limbar");   // Need to handle duplicates for comission sales
+            dealer.SellVehicle("Galloway", "Jeep", "Wrangler", 2018, 12000, "Ryan", "Graves");
+            dealer.SellVehicle("Charlie", "Honda", "Civic", 2005, 1900, "Jeff", "Halbert");
+            dealer.SellVehicle("Wood", "Nissan", "Sentra", 2007, 1600, "Mark", "Wong");
+            dealer.SellVehicle("Galloway", "Honda", "Civic", 2009, 2500, "Rabia", "Forn");
+            dealer.SellVehicle("Cairns", "Hyundai", "Sonata", 2019, 14500, "John", "Jones");
             Console.WriteLine();
-            dealer.SellCar("Darlin", "Buick", "Regal", 2009, 3400, "Mark", "Wong"); // Comes up invalid because information does not exist *onpurpose*
+            dealer.SellVehicle("Darlin", "Buick", "Regal", 2009, 3400, "Mark", "Wong"); // Comes up invalid because information does not exist *onpurpose*
 
             // Services 
             serv.Repair("Hyundai", "Sonata", 2019);
@@ -610,6 +616,7 @@ namespace DealershipProject
             serv.Repair("Honda", "Civic", 2005);
             //serv.RentVehicle("Graham");
 
+            // do while loop for our main program, type exit at any time to leave. Some menus such as add employees will also have sub menu options
             do
             {
                 Console.Clear();    // Clears the screen so you don't have to see it every run time, can be commented out to see what's happening above.
@@ -834,7 +841,7 @@ namespace DealershipProject
                     string costSTR = Console.ReadLine();
                     int cost = Convert.ToInt32(costSTR);
 
-                    dealer.SellCar(clname, make, model, year, cost, efname, elname);
+                    dealer.SellVehicle(clname, make, model, year, cost, efname, elname);
                 }
                 if (input == "service start")
                 {
